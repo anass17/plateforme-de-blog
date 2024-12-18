@@ -1,3 +1,18 @@
+<?php
+    require_once "JWT.php";
+
+    if (isset($_COOKIE['token'])) {
+
+        $validation_result = validateJWT($_COOKIE['token']);
+
+        if ($validation_result) {
+            header('Location: ../blogs.php');
+        } else {
+            setcookie('token', '', 0);
+        }
+    }
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,7 +28,7 @@
     ?>
     
     <div class="bg-gray-200 flex items-center justify-center h-full">
-        <form action="" method="POST" class="bg-white rounded-lg shadow-lg px-7 py-6 w-full max-w-lg">
+        <form action="auth.php" method="POST" class="bg-white rounded-lg shadow-lg px-7 py-6 w-full max-w-lg">
             <h2 class="text-center mb-7 text-xl font-bold text-green-500">LOG IN</h2>
             <div class="form-input mb-5">
                 <label for="email" class="block mb-1">Email</label>
@@ -24,7 +39,7 @@
                 <input type="password" placeholder="Write your password" class="border border-gray-300 rounded w-full px-3 py-2" id="password" name="password">
             </div>
             <p class="text-sm text-gray-500">You don't have an account? <a href="signup.php" class="font-semibold text-blue-500">Create one</a></p>
-            <button type="submit" class="px-4 py-2 rounded bg-green-500 text-white font-semibold mt-5">Log In</button>
+            <button type="submit" class="px-4 py-2 rounded bg-green-500 text-white font-semibold mt-5" name="form-type" value="login">Log In</button>
         </form>
     </div>
 
