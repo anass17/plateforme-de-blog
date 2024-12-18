@@ -40,7 +40,7 @@
                     Hablar conmigo mi amigo ab offipisci nulla, accusamus consectetur labore totam amet consectetur elit. Sit,  idds sapiente dolorrchitecto tempora odio, quisquam tae iste eos nobis?<br><br>
                     soluta sapiente dolorum architecto tempora odio, quisquam non beatae iste eos nobis? labore totam amet consectetur elit. Sit,  idds sapiente dolorrchitecto tem</p>
                 </div>
-                <div class="flex px-5 py-3 justify-between">
+                <div class="flex px-5 py-3 justify-between border border-gray-200">
                     <div class="flex">
                         <div class="mr-6">
                             <button type="button" class="font-semibold mr-1">Like</button>
@@ -54,6 +54,22 @@
                     <div class="ml-8">
                         <span>5</span>
                         <span type="button" class="font-semibold ml-1">Comments</span>
+                    </div>
+                </div>
+                <div class="border border-gray-200">
+                    <div class="comment px-5 py-3">
+                        <div class="comment-header">
+                            <h4 class="font-semibold text-green-500">Someone unknown</h4>
+                            <span class="text-xs text-gray-600 block">18 Jul 2024 - 08:23</span>
+                        </div>
+                        <p class="text-gray-800 mt-2">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quo, iusto.</p>
+                    </div>
+                    <div class="comment px-5 py-3">
+                        <div class="comment-header">
+                            <h4 class="font-semibold text-green-500">Someone unknown</h4>
+                            <span class="text-xs text-gray-600 block">18 Jul 2024 - 08:23</span>
+                        </div>
+                        <p class="text-gray-800 mt-2">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quo, iusto.</p>
                     </div>
                 </div>
             </div>
