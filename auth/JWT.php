@@ -13,7 +13,7 @@
 
     // Create a Json Web Token (JWT)
     
-    function createJWT($email) {
+    function createJWT($id, $email, $role) {
         
         // Create the header
 
@@ -27,7 +27,9 @@
         $payload = [
             'iat' => time(),
             'exp' => time() + (60 * 60 * 24),
-            'email' => $email
+            'id' => $id,
+            'email' => $email,
+            'role' => $role
         ];
 
 
@@ -48,7 +50,39 @@
 
         // The final JWT
 
-        return $encodedHeader . '.' . $encodedPayload . '.' . $encodedSignature;
+        $jwt = $encodedHeader . '.' . $encodedPayload . '.' . $encodedSignature;
+
+        return json_encode(['jwt' => $jwt]);
+    }
+
+    // Validate the JWT
+
+    function validateJWT($jwt) {
+        
+        $jwt_parts = explode('.', $jwt);
+
+        if (count($jwt_parts) !== 3) {
+            return false;
+        }
+
+        $headerAndPayload = $jwt_parts[0] . '.' . $jwt_parts[1];
+        $signatureProvided = $jwt_parts[2];
+
+        echo '<pre>';
+        print_r($headerAndPayload);
+        print_r($signatureProvided);
+        echo '</pre>';
+
+        $secretKey = "anass@BT";
+
+        $signatureExpected = hash_hmac('sha256', $headerAndPayload, $secretKey, true);
+        $signatureExpected = base64UrlEncode($signatureExpected);
+
+        if ($signatureProvided === $signatureExpected) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 ?>
