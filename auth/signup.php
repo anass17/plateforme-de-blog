@@ -10,6 +10,8 @@
 
     <?php 
         include "../inc/header.php";
+
+        require_once "validate-token.php";
     ?>
     
     <div class="bg-gray-200 flex items-center justify-center h-full">
