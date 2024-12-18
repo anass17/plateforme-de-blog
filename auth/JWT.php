@@ -11,6 +11,37 @@
         return $base64Url;
     }
 
+    // Function to decode data
+
+    function base64UrlDecode($data) {
+        $data = strtr($data, '-_', '+/');
+
+        $padding = strlen($data) % 4;
+        if ($padding) {
+            $data .= str_repeat('=', 4 - $padding);
+        }
+        return base64_decode($data);
+    }
+
+    // Check if token has expired
+
+    function isTokenExpired($payload) {
+
+        if (time() > $payload -> exp) {
+            return true;
+        }
+        return false;
+    }
+
+    // Check if payload has the necessary claims
+
+    function isPayloadValid($payload) {
+        if (!isset($payload -> exp, $payload -> email, $payload -> iat, $payload -> id, $payload -> role)) {
+            return false;
+        }
+        return true;
+    }
+
     // Create a Json Web Token (JWT)
     
     function createJWT($id, $email, $role) {
@@ -57,7 +88,9 @@
 
     // Validate the JWT
 
-    function validateJWT($jwt) {
+    function validateJWT($jwt_cookie) {
+
+        $jwt = json_decode($jwt_cookie) -> jwt;
         
         $jwt_parts = explode('.', $jwt);
 
@@ -65,23 +98,26 @@
             return false;
         }
 
-        $headerAndPayload = $jwt_parts[0] . '.' . $jwt_parts[1];
-        $signatureProvided = $jwt_parts[2];
-
-        echo '<pre>';
-        print_r($headerAndPayload);
-        print_r($signatureProvided);
-        echo '</pre>';
-
+        // Make a new signature base on the retrieved header and payload
+        
         $secretKey = "anass@BT";
 
+        $headerAndPayload = $jwt_parts[0] . '.' . $jwt_parts[1];
+        $signatureProvided = $jwt_parts[2];
+        
         $signatureExpected = hash_hmac('sha256', $headerAndPayload, $secretKey, true);
         $signatureExpected = base64UrlEncode($signatureExpected);
+        
+        // Find the payload
 
-        if ($signatureProvided === $signatureExpected) {
-            return true;
-        } else {
+        $payload = json_decode(base64UrlDecode($jwt_parts[1]));
+
+        // Verify Token validity
+
+        if ($signatureProvided !== $signatureExpected || !isPayloadValid($payload) || isTokenExpired($payload)) {
             return false;
+        } else {
+            return $payload;
         }
     }
 
