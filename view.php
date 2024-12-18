@@ -72,6 +72,34 @@
                         <p class="text-gray-800 mt-2">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quo, iusto.</p>
                     </div>
                 </div>
+                <div class="">
+                    <form action="" class="flex flex-1">
+                        <input type="text" class="w-full outline-none px-5 border border-gray-200 rounded-bl-lg" placeholder="Write a comment ...">
+                        <button type="submit" class="bg-green-500 text-white py-3 px-5 border border-green-500">Send</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="w-full h-screen bg-black fixed bg-opacity-70 flex justify-center items-center top-0 left-0 hidden">
+        <div class="w-full max-w-lg bg-white rounded-lg shadow">
+            <div class="modal-header flex justify-between px-7 py-4 border-b border-gray-300">
+                <h2 class="font-semibold text-2xl">Add a comment</h2>
+                <button type="button" class="font-bold text-2xl text-red-500">X</button>
+            </div>
+            <div class="px-7 py-5">
+                <form action="" method="POST">
+                    <div class="w-full mb-4">
+                        <label for="comment-email" class="block mb-1">Email</label>
+                        <input type="text" id="comment-email" class="w-full px-3 py-2 border border-gray-300 rounded outline-none" placeholder="Enter your email">
+                    </div>
+                    <div class="mb-4">
+                        <label for="comment-body" class="block mb-1">Message</label>
+                        <textarea id="comment-body" class="w-full px-3 py-2 border border-gray-300 rounded outline-none resize-none h-32" placeholder="Enter your message"></textarea>
+                    </div>
+                    <button type="submit" class="px-6 py-2 font-semibold rounded bg-green-500 text-white">SEND</button>
+                </form>
             </div>
         </div>
     </div>
