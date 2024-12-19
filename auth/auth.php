@@ -45,6 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 if (password_verify($password, $row["password"])) {
                     createJWTCookie($row['user_id'], $row["email"], $row["role_name"]);
+                    header('Location: ../blogs.php');
                 }
             } else {
                 echo 'Empty Result';

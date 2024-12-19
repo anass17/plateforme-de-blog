@@ -13,6 +13,11 @@
 <body class="flex h-screen flex-col">
 
     <?php 
+
+        $id = null;
+        $email = null;
+        $role = null;
+
         include "../inc/header.php";
     ?>
     

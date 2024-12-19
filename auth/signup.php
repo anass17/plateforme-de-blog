@@ -1,3 +1,7 @@
+<?php
+    require_once "validate-token.php";
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,9 +13,12 @@
 <body class="flex h-screen flex-col">
 
     <?php 
-        include "../inc/header.php";
 
-        require_once "validate-token.php";
+        $id = null;
+        $email = null;
+        $role = null;
+
+        include "../inc/header.php";
     ?>
     
     <div class="bg-gray-200 flex items-center justify-center h-full">
