@@ -1,4 +1,5 @@
 <?php
+    session_start();
     require_once "validate-token.php";
 ?>
 
@@ -24,6 +25,16 @@
     <div class="bg-gray-200 flex items-center justify-center h-full">
         <form action="auth.php" method="POST" class="bg-white rounded-lg shadow-lg px-7 py-6 w-full max-w-lg">
             <h2 class="text-center mb-7 text-xl font-bold text-green-500">LOG IN</h2>
+            <?php
+                if (isset($_SESSION["error_msg"])) {
+                    echo 
+                    "<div class='rounded-lg bg-red-300 px-6 py-5 text-center font-semibold mb-5'>
+                        <p>{$_SESSION['error_msg']}</p>
+                    </div>";
+                    session_destroy();
+                }
+            ?>
+            
             <div class="form-input mb-5">
                 <label for="email" class="block mb-1">Email</label>
                 <input type="text" placeholder="Write your email" class="border border-gray-300 rounded w-full px-3 py-2" id="email" name="email">

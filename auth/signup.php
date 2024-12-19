@@ -24,6 +24,15 @@
     <div class="bg-gray-200 flex items-center justify-center h-full">
         <form action="auth.php" method="POST" class="bg-white rounded-lg shadow-lg px-7 py-6 w-full max-w-lg">
             <h2 class="text-center mb-7 text-2xl font-bold text-green-500">SIGN UP</h2>
+            <?php
+                if (isset($_SESSION["error_msg"])) {
+                    echo 
+                    "<div class='rounded-lg bg-red-300 px-6 py-5 text-center font-semibold mb-5'>
+                        <p>{$_SESSION['error_msg']}</p>
+                    </div>";
+                    session_destroy();
+                }
+            ?>
             <div class="form-group mb-5 flex gap-4">
                 <div class="form-input w-full">
                     <label for="first_name" class="block mb-1">First Name</label>

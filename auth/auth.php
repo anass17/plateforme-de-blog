@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 require_once "../connect/db-connect.php";
 require_once "JWT.php";
@@ -18,8 +19,17 @@ function createJWTCookie($id, $email, $role) {
     setcookie('token', $jwt, $options);
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+function setLoginError($error_msg) {
+    $_SESSION["error_msg"] = $error_msg;
+    header("Location: login.php");
+}
 
+function setSignupError($error_msg) {
+    $_SESSION["error_msg"] = $error_msg;
+    header("Location: signup.php");
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $form_type = isset($_POST["form-type"]) ? $_POST["form-type"] : "";
 
@@ -46,12 +56,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 if (password_verify($password, $row["password"])) {
                     createJWTCookie($row['user_id'], $row["email"], $row["role_name"]);
                     header('Location: ../blogs.php');
+                } else {
+                    setLoginError("login credentials you provided were incorrect");
                 }
             } else {
-                echo 'Empty Result';
+                setLoginError("login credentials you provided were incorrect");
             }
         } else {
-            echo 'Error';
+            setLoginError("Could not process your request - 1");
         }
     } else if ($form_type == "signup") {
 
@@ -75,7 +87,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $row = $result -> fetch_assoc();
 
             if ($row) {
-                echo 'This user already exists';
+                setSignupError("This email already exists");
             } else {
                 $first_name = ucfirst(strtolower($first_name));
                 $last_name = ucfirst(strtolower($last_name));
@@ -90,10 +102,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     createJWTCookie($lastInsertedId, $email, "user");
                     header('Location: ../blogs.php');
                 } else {
-                    echo 'Error';
+                    setSignupError("Could not process your request - 2");
                 }
             }
         }
+    } else {
+        setLoginError("Could not process your request - 3");
     }
 
 
