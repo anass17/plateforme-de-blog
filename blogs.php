@@ -1,3 +1,24 @@
+<?php
+    require_once "auth/JWT.php";
+
+    $id = null;
+    $email = null;
+    $role = null;
+
+    if (isset($_COOKIE['token'])) {
+
+        $validation_result = validateJWT($_COOKIE['token']);
+
+        if ($validation_result) {
+            $id = $validation_result -> id;
+            $email = $validation_result -> email;
+            $role = $validation_result -> role;
+        } else {
+            setcookie('token', '', 0);
+        }
+    }
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
