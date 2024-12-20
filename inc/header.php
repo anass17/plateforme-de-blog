@@ -5,11 +5,17 @@
         </div>
         <?php
             if ($role === "user" || $role === "admin") {
+                if ($image_url == "") {
+                    $image_url = "/assets/imgs/users/default.webp";
+                }
                 echo 
-                '<nav>
+                '<nav class="flex items-center">
                     <a href="/blogs.php" class="font-semibold text-md ml-4">Blogs</a>
-                    <a href="#" class="font-semibold text-md ml-4">Profile</a>
                     <a href="/auth/logout.php" class="font-semibold text-md ml-4">logout</a>
+                    <a href="#" class="font-semibold text-md ml-4 inline-flex gap-3 items-center">
+                        <span>' . $first_name . ' ' . $last_name . '</span>
+                        <img src="' . $image_url . '" class="w-10 h-10 rounded-full border-2 border-green-700">    
+                    </a>
                 </nav>';
             } else {
                 echo 
