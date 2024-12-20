@@ -49,6 +49,12 @@
 
             $formated_datetime = $formated_date . ' - ' . $time;
 
+            if (trim($row["post_image"]) != "") {
+                $post_image = urlencode($row["post_image"]);
+            } else {
+                $post_image = "/assets/imgs/blogs/placeholder.jpg";
+            }
+
             $post_author_id = $row["post_author"];
         }
     ?>
@@ -91,7 +97,7 @@
         </div>
         <div class="w-[60%]">
             <div class="blog shadow rounded-lg overflow-hidden">
-                <div class="h-80 bg-[url('assets/imgs/test.jpg')] bg-cover bg-center">
+                <div class="h-80 bg-[url('assets/imgs/test.jpg')] bg-cover bg-center" style="background-image: url('<?php echo $post_image; ?>')">
                 </div>
                 <div class="blog-header border border-gray-200 px-5 py-4">
                     <h1 class="text-center mb-4 text-xl font-semibold text-green-600"><a href="#"><?php echo $row["post_title"]; ?></a></h1>
@@ -109,8 +115,8 @@
                                 $result = $stmt -> get_result();
 
                                 if ($result -> num_rows > 0) {
-                                    while($row = $result -> fetch_assoc()) {
-                                        echo "<button type='button' class='inline-block px-3 py-2 text-sm bg-gray-800 text-white rounded-md font-semibold'>{$row["tag_name"]}</button>";
+                                    while($tags_row = $result -> fetch_assoc()) {
+                                        echo "<button type='button' class='inline-block px-3 py-2 text-sm bg-gray-800 text-white rounded-md font-semibold'>{$tags_row["tag_name"]}</button>";
                                     }
                                 } else {
                                     echo "<span class='inline-block px-3 py-2 text-sm bg-gray-200 rounded-md font-semibold'>No Tags</span>";
@@ -122,9 +128,7 @@
                         ?>
                     
                     </div>
-                    <p class="mt-4 text-gray-700">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Sit, ab officiis adipisci nulla, accusamus consectetur labore totam id soluta sapiente dolorum architecto tempora odio, quisquam non beatae iste eos nobis?<br><br>
-                    Hablar conmigo mi amigo ab offipisci nulla, accusamus consectetur labore totam amet consectetur elit. Sit,  idds sapiente dolorrchitecto tempora odio, quisquam tae iste eos nobis?<br><br>
-                    soluta sapiente dolorum architecto tempora odio, quisquam non beatae iste eos nobis? labore totam amet consectetur elit. Sit,  idds sapiente dolorrchitecto tem</p>
+                    <p class='mt-4 text-gray-700'><?php echo $row["post_content"]; ?></p>
                 </div>
                 <div class="flex px-5 py-3 justify-between border border-gray-200">
                     <div class="flex">
