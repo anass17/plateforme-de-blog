@@ -36,7 +36,7 @@
     // Check if payload has the necessary claims
 
     function isPayloadValid($payload) {
-        if (!isset($payload -> exp, $payload -> email, $payload -> iat, $payload -> id, $payload -> role)) {
+        if (!isset($payload -> exp, $payload -> email, $payload -> iat, $payload -> id, $payload -> role, $payload -> first_name, $payload -> last_name)) {
             return false;
         }
         return true;
@@ -44,7 +44,7 @@
 
     // Create a Json Web Token (JWT)
     
-    function createJWT($id, $email, $role) {
+    function createJWT($id, $email, $role, $first_name, $last_name) {
         
         // Create the header
 
@@ -60,7 +60,9 @@
             'exp' => time() + (60 * 60 * 24),
             'id' => $id,
             'email' => $email,
-            'role' => $role
+            'role' => $role,
+            'first_name' => $first_name,
+            'last_name' => $last_name
         ];
 
 

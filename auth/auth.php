@@ -4,8 +4,8 @@ session_start();
 require_once "../connect/db-connect.php";
 require_once "JWT.php";
 
-function createJWTCookie($id, $email, $role) {
-    $jwt = createJWT($id, $email, $role);
+function createJWTCookie($id, $email, $role, $first_name, $last_name) {
+    $jwt = createJWT($id, $email, $role, $first_name, $last_name);
 
     $options = [
         'expires' => time() + (60 * 60 * 24),
@@ -42,7 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Check if user exists
 
-        $stmt = $conn -> prepare("select email, password, user_id, role_name from users join roles on users.user_id = roles.role_id where email = ?");
+        $stmt = $conn -> prepare("select first_name, last_name, email, password, user_id, role_name from users join roles on users.user_id = roles.role_id where email = ?");
 
         $stmt -> bind_param("s", $email);
 
@@ -54,7 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($row) {
 
                 if (password_verify($password, $row["password"])) {
-                    createJWTCookie($row['user_id'], $row["email"], $row["role_name"]);
+                    createJWTCookie($row['user_id'], $row["email"], $row["role_name"], $row["first_name"], $row["last_name"]);
                     header('Location: ../blogs.php');
                 } else {
                     setLoginError("login credentials you provided were incorrect");
@@ -63,7 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 setLoginError("login credentials you provided were incorrect");
             }
         } else {
-            setLoginError("Could not process your request - 1");
+            setLoginError("Could not process your request");
         }
     } else if ($form_type == "signup") {
 
@@ -99,15 +99,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 if($stmt -> execute()) {
                     $lastInsertedId = $conn -> insert_id;
-                    createJWTCookie($lastInsertedId, $email, "user");
+                    createJWTCookie($lastInsertedId, $email, "user", $first_name, $last_name);
                     header('Location: ../blogs.php');
                 } else {
-                    setSignupError("Could not process your request - 2");
+                    setSignupError("Could not process your request");
                 }
             }
         }
     } else {
-        setLoginError("Could not process your request - 3");
+        setLoginError("Could not process your request");
     }
 
 
