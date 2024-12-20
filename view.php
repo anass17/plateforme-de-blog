@@ -160,6 +160,9 @@
                         <span type="button" class="font-semibold ml-1">Comments</span>
                     </div>
                 </div>
+
+                <!-- Displaying Comments -->
+
                 <div class="border border-gray-200">
                     <?php
                         $stmt = $conn -> prepare("SELECT * FROM comments join users ON comments.comment_author = users.user_id WHERE comment_post = ?");
@@ -174,19 +177,26 @@
 
                                     $username = $comment_row["first_name"] != "" ? $comment_row["first_name"] . " " . $comment_row["last_name"] : $comment_row["email"];
 
+                                    $months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                                    $arr = explode(' ', $comment_row["comment_date"]);
+                                    $date_parts = explode('-', $arr[0]);
+                                    $formated_date = $date_parts[2] . ' ' . $months[$date_parts[1] - 1] . ' ' . $date_parts[0];
+                                    $time = substr($arr[1], 0, 5);
+                                    $formated_datetime = $formated_date . ' - ' . $time;
+
                                     echo 
                                     "<div class='comment px-5 py-3'>
                                         <div class='comment-header'>
                                             <h4 class='font-semibold text-green-500'>{$username}</h4>
-                                            <span class='text-xs text-gray-600 block'>18 Jul 2024 - 08:23</span>
+                                            <span class='text-xs text-gray-600 block'>{$formated_datetime}</span>
                                         </div>
                                         <p class='text-gray-800 mt-2'>{$comment_row["comment_content"]}</p>
                                     </div>";
                                 }
                             } else {
                                 echo 
-                                "<div class='px-5 py-3'>
-                                    <p class='text-center rounded-md font-semibold'>No comments were found for this post</span>
+                                "<div class='px-5 py-8'>
+                                    <p class='text-center rounded-md font-semibold text-gray-500'>No comments were found for this post</span>
                                 </div>";
                             }
                         } else {
@@ -199,8 +209,10 @@
                     <?php
                         if ($role != null) {
                             echo 
-                            '<form action="" class="flex flex-1">
-                                <input type="text" class="w-full outline-none px-5 border border-gray-200 rounded-bl-lg" placeholder="Write a comment ...">
+                            '<form action="requests/add-comment.php" method="POST" class="flex flex-1">
+                                <input type="hidden" name="post-id" value="' . $_GET["id"] . '">
+                                <label for="comment-body" class="sr-only">Comment Body</label>
+                                <input type="text" class="w-full outline-none px-5 border border-gray-200 rounded-bl-lg"id="comment-body" name="comment-body" placeholder="Write a comment ...">
                                 <button type="submit" class="bg-green-500 text-white py-3 px-5 border border-green-500">Send</button>
                             </form>';
                         } else {

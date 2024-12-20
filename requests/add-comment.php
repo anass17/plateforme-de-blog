@@ -5,8 +5,6 @@
         require_once "../connect/db-connect.php";
         require_once "../auth/JWT.php";
 
-        print_r($_POST);
-
         $id = null;
         $email = null;
         $role = null;
@@ -27,13 +25,16 @@
 
         }
 
-        // Get Details
-
-        $comment_email = isset($_POST["comment-email"]) ? $_POST["comment-email"] : "";
-        $comment_body = isset($_POST["comment-body"]) ? $_POST["comment-body"] : "";
-        $post_id = isset($_POST["post-id"]) ? $_POST["post-id"] : "";
-
         if ($role == null) {
+
+            // Get Details
+
+            $comment_email = isset($_POST["comment-email"]) ? $_POST["comment-email"] : "";
+            $comment_body = isset($_POST["comment-body"]) ? $_POST["comment-body"] : "";
+            $post_id = isset($_POST["post-id"]) ? $_POST["post-id"] : "";
+
+            // Insert new user
+
             $stmt = $conn -> prepare("INSERT INTO users (first_name, last_name, email, password, user_role) VALUES ('', '', ?, '', 3)");
 
             $stmt -> bind_param("s", $comment_email);
@@ -52,10 +53,19 @@
                 echo 'Error! Could not process your request';
             }
             
-        }
+        } else {
+            print_r($_POST);
 
-        
+            $comment_body = isset($_POST["comment-body"]) ? $_POST["comment-body"] : "";
+            $post_id = isset($_POST["post-id"]) ? $_POST["post-id"] : "";
+
+            $stmt = $conn -> prepare("INSERT INTO `comments` (comment_content, comment_author, comment_post) VALUES (?, ?, ?)");
+
+            $stmt -> bind_param("sii", $comment_body, $id, $post_id);
+
+            $stmt -> execute();
+        }
 
     }
 
-    header('Location: ../blogs.php');
+    header('Location: ../view.php?id=' . $post_id);
