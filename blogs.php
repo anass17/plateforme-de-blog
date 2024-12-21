@@ -1,4 +1,6 @@
 <?php
+    session_start();
+
     require_once "connect/db-connect.php";
     require_once "auth/JWT.php";
 
@@ -53,6 +55,16 @@
     <div class="flex">
         <div class="py-16 px-3 w-full">
             <h1 class="sr-only">Dive into the blogs we post</h1>
+            <?php 
+                if (isset($_SESSION["post_error_msg"])) {
+                    echo 
+                    "<div class='max-w-lg mx-auto bg-red-200 px-8 py-5 rounded-md mb-10 text-center'>
+                        <h2 class='mb-3 font-bold text-lg'>Error!</h2>
+                        <p class='text-center font-semibold'>{$_SESSION["post_error_msg"]}</p>
+                    </div>";
+                    session_destroy();
+                }
+            ?>
             <div class="flex gap-3 justify-center mb-8">
                 <button class="add-blog-btn px-4 py-1.5 rounded-md bg-blue-500 text-white flex items-center justify-center gap-3">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-white" viewBox="0 0 512 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1 0 32c0 8.8 7.2 16 16 16l32 0zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"/></svg>
@@ -155,15 +167,15 @@
             <div class="px-7 py-5">
                 <form action="requests/add-blog.php" method="POST" enctype="multipart/form-data">
                     <div class="w-full mb-4">
-                        <label for="blog-title" class="block mb-1">Title</label>
+                        <label for="blog-title" class="block mb-1">Title *</label>
                         <input type="text" id="blog-title" name="blog-title" class="w-full px-3 py-2 border border-gray-300 rounded outline-none" placeholder="Enter your email">
                     </div>
                     <div class="mb-4">
-                        <label for="blog-body" class="block mb-1">Blog Body</label>
+                        <label for="blog-body" class="block mb-1">Blog Body *</label>
                         <textarea id="blog-body" name="blog-body" class="w-full px-3 py-2 border border-gray-300 rounded outline-none resize-none h-32" placeholder="Enter your message"></textarea>
                     </div>
                     <div class="mb-4">
-                        <label for="blog-tags" class="block mb-1">Tags</label>
+                        <label for="blog-tags" class="block mb-1">Tags *</label>
                         <div class="">
                             <div class="bg-gray-200 mr-1 px-4 py-1.5 rounded-md inline-flex justify-center items-center gap-2">
                                 <span class="tags-count">0</span>Tags

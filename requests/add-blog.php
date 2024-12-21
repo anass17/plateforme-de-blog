@@ -1,4 +1,11 @@
 <?php
+    session_start();
+
+    function setError($error_msg) {
+        $_SESSION["post_error_msg"] = $error_msg;
+        header('Location: ../blogs.php');
+        exit;
+    }
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
@@ -32,6 +39,22 @@
         $blog_body = isset($_POST["blog-body"]) ? $_POST["blog-body"] : "";
         $blog_tags = isset($_POST["blog-tags"]) ? $_POST["blog-tags"] : "";
 
+        // Data Validation
+    
+        if (strlen($blog_title) < 3) {
+            setError("Post Title was too short");
+        }
+
+        if (strlen($blog_title) < 20) {
+            setError("Post Body was too short");
+        }
+
+        if (preg_match('/^([1-9][0-9]*;)+$/', $blog_tags) == 0) {
+            setError("Please add at least one tag to your post");
+        }
+
+        // Tags splitting
+
         $blog_tags = trim($blog_tags, ";");
         $blog_tags = explode(';', $blog_tags);
 
@@ -60,10 +83,10 @@
     
                 // Move the uploaded file to the target directory
                 if (!move_uploaded_file($fileTmpPath, $targetPath)) {
-                    echo "Error uploading image. Please try again.";
+                    setError("Error uploading image. Please try again");
                 }
             } else {
-                echo "Invalid file type. Only JPEG and PNG are allowed.";
+                setError("Invalid file type. Only JPEG, PNG and WEBP are allowed.");
             }
         }
 
@@ -87,7 +110,7 @@
             $stmt = mysqli_query($conn, $insert_query);
 
         } else {
-            $_SESSION["post_error_msg"] = "Could not process your request";
+            setError("Could not process your request");
         }
     }
 
