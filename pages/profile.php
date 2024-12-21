@@ -64,8 +64,8 @@
         // Get statistics
 
         $stmt = $conn -> prepare("SELECT count(*) as count FROM posts WHERE post_author = ?
-        UNION SELECT count(*) FROM comments WHERE comment_author = ?
-        UNION SELECT count(*) FROM post_reactions WHERE react_user = ?");
+        UNION All SELECT count(*) FROM comments WHERE comment_author = ?
+        UNION ALL SELECT count(*) FROM post_reactions WHERE react_user = ?");
 
         $stmt -> bind_param("iii", $id, $id, $id);
 
