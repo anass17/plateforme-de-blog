@@ -22,11 +22,13 @@ function createJWTCookie($id, $email, $role, $first_name, $last_name, $image) {
 function setLoginError($error_msg) {
     $_SESSION["error_msg"] = $error_msg;
     header("Location: login.php");
+    exit();
 }
 
 function setSignupError($error_msg) {
     $_SESSION["error_msg"] = $error_msg;
     header("Location: signup.php");
+    exit();
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -39,6 +41,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $email = isset($_POST["email"]) ? $_POST["email"] : "";
         $password = isset($_POST["password"]) ? $_POST["password"] : "";
+
+        // Validated entered data
+
+        if (preg_match("/^[a-zA-Z0-9.-_]{3,}@[a-zA-Z.]{2,}\.[a-z]{2,}$/", $email) == 0) {
+            setLoginError("Login credentials you provided were incorrect");
+        }
+
+        if (preg_match("/^.{8,}$/", $password) == 0) {
+            setLoginError("Login credentials you provided were incorrect");
+        }
 
         // Check if user exists
 
@@ -57,10 +69,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     createJWTCookie($row['user_id'], $row["email"], $row["role_name"], $row["first_name"], $row["last_name"], $row["user_image"]);
                     header('Location: ../blogs.php');
                 } else {
-                    setLoginError("login credentials you provided were incorrect");
+                    setLoginError("Login credentials you provided were incorrect");
                 }
             } else {
-                setLoginError("login credentials you provided were incorrect");
+                setLoginError("Login credentials you provided were incorrect");
             }
         } else {
             setLoginError("Could not process your request");
@@ -74,6 +86,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $email = isset($_POST["email"]) ? $_POST["email"] : "";
         $password = isset($_POST["password"]) ? $_POST["password"] : "";
         $confirm_password = isset($_POST["confirm-password"]) ? $_POST["confirm-password"] : "";
+
+        // Data to be included in signup form, in case of errors
+
+        $_SESSION["signup-f-name"] = $first_name;
+        $_SESSION["signup-l-name"] = $last_name;
+        $_SESSION["signup-email"] = $email;
+
+        // Validated entered data
+
+        if (preg_match("/^[a-z A-Z]{2,}$/", $first_name) == 0) {
+            setSignupError("Please enter a valid first name");
+        }
+
+        if (preg_match("/^[a-z A-Z]{2,}$/", $last_name) == 0) {
+            setSignupError("Please enter a valid last name");
+        }
+
+        if (preg_match("/^[a-zA-Z0-9.-_]{3,}@[a-zA-Z.]{2,}\.[a-z]{2,}$/", $email) == 0) {
+            setSignupError("Please enter a valid email address");
+        }
+
+        if (preg_match("/^.{8,}$/", $password) == 0) {
+            setSignupError("Your password must contain at least 8 characters");
+        }
+
+        if ($password != $confirm_password) {
+            setSignupError("The two passwords does not match");
+        }
 
         // Check if user exists
 
@@ -110,7 +150,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         setLoginError("Could not process your request");
     }
 
+    // Clear the session if data is valid
 
+    session_destroy();
 }
 
 
