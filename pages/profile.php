@@ -78,10 +78,28 @@
                 array_push($counters, $count_row['count']);
             }
         }
+
+        // Get published posts
+
+        $stmt = $conn -> prepare("SELECT * FROM posts WHERE post_author = ?");
+        $stmt -> bind_param("i", $id);
+
+        if ($stmt -> execute()) {
+            $posts_result = $stmt -> get_result();
+        }
+
+        // Get liked posts
+
+        $stmt = $conn -> prepare("SELECT * FROM post_reactions join posts on posts.post_id = post_reactions.react_post WHERE react_user = ?");
+        $stmt -> bind_param("i", $id);
+
+        if ($stmt -> execute()) {
+            $posts_react_result = $stmt -> get_result();
+        }
     ?>
     
     <h1 class="sr-only">Profile</h1>
-    <div class="max-w-7xl mx-auto px-3 py-10 grid gap-4 grid-cols-[35%_1fr]">
+    <div class="max-w-7xl mx-auto px-3 py-10 grid gap-4 grid-cols-[35%_1fr] items-start">
         <div class="border border-gray-200 rounded-lg px-3 py-7 text-center">
             <div>
                 <div class="w-16 h-16 rounded-full border-2 border-green-500 bg-gray-300 mx-auto mb-5">
@@ -111,33 +129,40 @@
         <div id="option-blocks">
             <div class="border border-gray-200 rounded-lg flex-1 py-8 px-8" id="published-posts">
                 <h2 class="text-3xl text-green-500 font-semibold mb-8 text-center">Published Posts</h2>
-                <div class="mb-6">
-                    <h3 class="font-semibold text-blue-500 text-lg"><a href="#">Top 5 Frameworks you must learn</a></h3>
-                    <span class="text-gray-400 text-md">20 Dec 2024 - 23:40</span>
-                    <p class="mt-2">Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam animi itaque
-                    voluptate ipsa perferendis quae alias</p>
-                </div>
-                <div class="mb-6">
-                    <h3 class="font-semibold text-blue-500 text-lg"><a href="#">Top 5 Frameworks you must learn</a></h3>
-                    <span class="text-gray-400 text-md">20 Dec 2024 - 23:40</span>
-                    <p class="mt-2">Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam animi itaque
-                    voluptate ipsa perferendis quae alias</p>
-                </div>
+
+                <?php
+                    if ($posts_result -> num_rows > 0) {
+                        while($row = $posts_result -> fetch_assoc()) {
+                            $formated_datetime = format_datetime($row["post_date"]);
+                            echo 
+                            "<div class='mb-6'>
+                                <h3 class='font-semibold text-blue-500 text-lg'><a href='/view.php?id={$row["post_id"]}'>{$row["post_title"]}</a></h3>
+                                <span class='text-gray-400 text-md'>{$formated_datetime}</span>
+                                <p class='mt-2'>{$row["post_content"]}</p>
+                            </div>";
+                        }
+                    } else {
+                        echo '<p class="text-center font-semibold text-md text-gray-600">You have not published any posts yet.</p>';
+                    }
+                ?>
             </div>
             <div class="border border-gray-200 rounded-lg flex-1 py-8 px-8 hidden" id="liked-posts">
                 <h2 class="text-3xl text-green-500 font-semibold mb-8 text-center">Liked Posts</h2>
-                <div class="mb-6">
-                    <h3 class="font-semibold text-blue-500 text-lg"><a href="#">Top 5 Frameworks you must learn</a></h3>
-                    <span class="text-gray-400 text-md">20 Dec 2024 - 23:40</span>
-                    <p class="mt-2">Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam animi itaque
-                    voluptate ipsa perferendis quae alias</p>
-                </div>
-                <div class="mb-6">
-                    <h3 class="font-semibold text-blue-500 text-lg"><a href="#">Top 5 Frameworks you must learn</a></h3>
-                    <span class="text-gray-400 text-md">20 Dec 2024 - 23:40</span>
-                    <p class="mt-2">Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam animi itaque
-                    voluptate ipsa perferendis quae alias</p>
-                </div>
+                <?php
+                    if ($posts_react_result -> num_rows > 0) {
+                        while($row = $posts_react_result -> fetch_assoc()) {
+                            $formated_datetime = format_datetime($row["post_date"]);
+                            echo 
+                            "<div class='mb-6'>
+                                <h3 class='font-semibold text-blue-500 text-lg'><a href='/view.php?id={$row["post_id"]}'>{$row["post_title"]}</a></h3>
+                                <span class='text-gray-400 text-md'>{$formated_datetime}</span>
+                                <p class='mt-2'>{$row["post_content"]}</p>
+                            </div>";
+                        }
+                    } else {
+                        echo '<p class="text-center font-semibold text-md text-gray-600">You have not liked any posts yet.</p>';
+                    }
+                ?>
             </div>
             <div class="border border-gray-200 rounded-lg flex-1 py-8 px-12 hidden" id="settings">
                 <h2 class="text-3xl text-green-500 font-semibold mb-8 text-center">Settings</h2>
@@ -145,21 +170,21 @@
                     <div class="mb-3">
                         <label class="block mb-1 font-semibold" for="picture">Profile Picture</label>
                         <div>
-                            <img src="/assets/imgs/users/default.webp" class="w-24 rounded">
+                            <img src="<?php if ($user_row["user_image"] == "") {echo "/assets/imgs/users/default.webp";} else {echo $user_row["user_image"];} ?>" class="w-24 rounded">
                         </div>
                         <input type="file" id="picture" name="picture" class="hidden" disabled>
                     </div>
                     <div class="mb-3">
                         <label class="block mb-1 font-semibold" for="first_name">First Name</label>
-                        <input type="text" id="first_name" name="first_name" class="px-3 py-1.5 rounded w-80 outline-none bg-white" value="Ahmed" placeholder="Write your first name" disabled>
+                        <input type="text" id="first_name" name="first_name" class="px-3 py-1.5 rounded w-80 outline-none bg-white" value="<?php echo $user_row["first_name"]; ?>" placeholder="Write your first name" disabled>
                     </div>
                     <div class="mb-3">
                         <label class="block mb-1 font-semibold" for="last_name">Last Name</label>
-                        <input type="text" id="last_name" name="last_name" class="px-3 py-1.5 rounded w-80 outline-none bg-white" value="Taoudi" placeholder="Write your last name" disabled>
+                        <input type="text" id="last_name" name="last_name" class="px-3 py-1.5 rounded w-80 outline-none bg-white" value="<?php echo $user_row["last_name"]; ?>" placeholder="Write your last name" disabled>
                     </div>
                     <div class="mb-3">
                         <label class="block mb-1 font-semibold" for="email">Email</label>
-                        <input type="text" id="email" name="email" class="px-3 py-1.5 rounded w-80 outline-none bg-white" value="ahmed.taoudi@gmail.com" placeholder="Write your email" disabled>
+                        <input type="text" id="email" name="email" class="px-3 py-1.5 rounded w-80 outline-none bg-white" value="<?php echo $user_row["email"]; ?>" placeholder="Write your email" disabled>
                     </div>
                     <div class="mb-3">
                         <label class="block mb-1 font-semibold" for="password">Password</label>
@@ -175,7 +200,7 @@
                 <p class="font-semibold mb-5">If you delete your account, all your data will be removed and this cannot be undone.</p>
                 <p class="font-semibold mb-5">Are you sure you want to delete your account? </p>
                 <form action="" method="POST">
-                    <input type="hidden" value="" name="user_id">
+                    <input type="hidden" value="<?php echo $user_row["user_id"]; ?>" name="user_id">
                     <button type="submit" class="px-7 py-2 bg-red-500 rounded text-white">Confirm Delete</button>
                 </form>
             </div>
