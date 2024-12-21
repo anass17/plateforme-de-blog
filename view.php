@@ -16,6 +16,9 @@
         $id = null;
         $email = null;
         $role = null;
+        $first_name = null;
+        $last_name = null;
+        $image_url = null;
 
         if (isset($_COOKIE['token'])) {
 
@@ -25,6 +28,9 @@
                 $id = $validation_result -> id;
                 $email = $validation_result -> email;
                 $role = $validation_result -> role;
+                $first_name = $validation_result -> first_name;
+                $last_name = $validation_result -> last_name;
+                $image_url = $validation_result -> image_url;
             } else {
                 setcookie('token', '', 0);
             }
