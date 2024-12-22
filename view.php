@@ -103,7 +103,11 @@
         </div>
         <div class="w-[60%]">
             <div class="blog shadow rounded-lg overflow-hidden">
-                <div class="h-80 bg-cover bg-center" style="background-image: url('<?php echo $post_image; ?>')">
+                
+                <div class="h-80 bg-cover bg-center relative group" style="background-image: url('<?php echo $post_image; ?>')">
+                    <div class="absolute top-5 right-5 opacity-0 group-hover:opacity-100 transition-opacity post-menu-btn">
+                        <button type="button" class="font-bold text-sm tracking-wider w-8 h-8 bg-gray-100 border-2 border-gray-600 text-gray-600 pb-0.5 rounded-full flex justify-center items-center">•••</button>
+                    </div>
                 </div>
                 <div class="blog-header border border-gray-200 px-5 py-4">
                     <h1 class="text-center mb-4 text-xl font-semibold text-green-600"><a href="#"><?php echo $row["post_title"]; ?></a></h1>
@@ -112,6 +116,8 @@
                     <div class="tags mt-3 mb-2 flex gap-2 justify-center">
 
                         <?php
+
+                            // Select Tags that are linked to this post
                         
                             $stmt = $conn -> prepare("SELECT * FROM post_tags join tags on tags.tag_id = post_tags.tag_id WHERE post_id = ?");
 
@@ -149,6 +155,9 @@
                     </div>
                     <div class="ml-8">
                         <?php
+
+                            // Select all comments that were written for this post
+
                             $stmt = $conn -> prepare("SELECT count(*) AS count FROM comments WHERE comment_post = ?");
 
                             $stmt -> bind_param("i", $_GET["id"]);
@@ -213,6 +222,9 @@
                 </div>
                 <div class="">
                     <?php
+
+                        // Comment Btn depending on the role                        
+
                         if ($role != null) {
                             echo 
                             '<form action="requests/add-comment.php" method="POST" class="flex flex-1">
@@ -233,6 +245,8 @@
             </div>
         </div>
     </div>
+
+    <!-- Comment form for visitor -->
 
     <?php if($role == null): ?>
 
@@ -258,6 +272,51 @@
                 </div>
             </div>
         </div>
+
+    <?php endif; ?>
+
+    <!-- Side Menu and delete confirmation for admins, super admins and post author -->
+
+    <?php if($role == 'admin' || $role == 'super_admin' || ($role == 'user' && $id == $row["post_author"])): ?>
+
+    <div class="post-menu-modal w-full h-screen bg-black fixed bg-opacity-70 justify-center items-center top-0 left-0 hidden">
+        <div class="w-full max-w-md bg-white rounded-lg shadow">
+            <div class="modal-header flex justify-between px-7 py-4 border-b border-gray-300">
+                <h2 class="font-semibold text-2xl">Post Menu</h2>
+                <button type="button" class="close-btn font-bold text-2xl text-red-500">X</button>
+            </div>
+            <div class="px-7 py-10">
+                <button type="button" class="mb-5 font-semibold text-lg text-gray-700 mx-auto flex gap-3 items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-gray-700" viewBox="0 0 512 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1 0 32c0 8.8 7.2 16 16 16l32 0zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"/></svg>
+                    <span>Modify Post</span>
+                </button>
+                <button type="button" class="mb-5 font-semibold text-lg text-gray-700 mx-auto flex gap-3 items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-gray-700" viewBox="0 0 448 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M64 32C64 14.3 49.7 0 32 0S0 14.3 0 32L0 64 0 368 0 480c0 17.7 14.3 32 32 32s32-14.3 32-32l0-128 64.3-16.1c41.1-10.3 84.6-5.5 122.5 13.4c44.2 22.1 95.5 24.8 141.7 7.4l34.7-13c12.5-4.7 20.8-16.6 20.8-30l0-247.7c0-23-24.2-38-44.8-27.7l-9.6 4.8c-46.3 23.2-100.8 23.2-147.1 0c-35.1-17.6-75.4-22-113.5-12.5L64 48l0-16z"/></svg>
+                    <span>Report Post</span>
+                </button>
+                <button type="button" class="delete-btn font-semibold text-lg text-red-500 mx-auto flex gap-3 items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-red-500" viewBox="0 0 448 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0L284.2 0c12.1 0 23.2 6.8 28.6 17.7L320 32l96 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 96C14.3 96 0 81.7 0 64S14.3 32 32 32l96 0 7.2-14.3zM32 128l384 0 0 320c0 35.3-28.7 64-64 64L96 512c-35.3 0-64-28.7-64-64l0-320zm96 64c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16z"/></svg>
+                    <span>Delete Post</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-delete-modal w-full h-screen bg-black fixed bg-opacity-70 justify-center items-center top-0 left-0 hidden">
+        <div class="w-full max-w-md bg-white rounded-lg shadow">
+            <div class="modal-header flex justify-between px-7 py-4 border-b border-gray-300">
+                <h2 class="font-semibold text-2xl">Post Menu</h2>
+                <button type="button" class="close-btn font-bold text-2xl text-red-500">X</button>
+            </div>
+            <div class="px-7 py-10">
+                <p class="font-medium">This will delete the post permanently. Are you sure you want to proceed?</p>
+                <form action="/requests/delete-post.php" method="POST" class="mt-6">
+                    <input type="hidden" value="<?php echo $row["post_id"]; ?>">
+                    <button class="px-5 py-2 rounded bg-red-500 text-white">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <?php endif; ?>
 
