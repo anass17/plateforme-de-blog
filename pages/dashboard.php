@@ -80,28 +80,34 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 relative top-0.5 fill-green-500" viewBox="0 0 448 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M0 80L0 229.5c0 17 6.7 33.3 18.7 45.3l176 176c25 25 65.5 25 90.5 0L418.7 317.3c25-25 25-65.5 0-90.5l-176-176c-12-12-28.3-18.7-45.3-18.7L48 32C21.5 32 0 53.5 0 80zm112 32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>
                     <span>Tags</span>
                 </button>
-                <button type="button" data-target="settings" class="font-semibold mb-3 flex gap-3">
+                <button type="button" data-target="reported-posts" class="font-semibold mb-3 flex gap-3">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 relative top-0.5 fill-green-500" viewBox="0 0 448 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M64 32C64 14.3 49.7 0 32 0S0 14.3 0 32L0 64 0 368 0 480c0 17.7 14.3 32 32 32s32-14.3 32-32l0-128 64.3-16.1c41.1-10.3 84.6-5.5 122.5 13.4c44.2 22.1 95.5 24.8 141.7 7.4l34.7-13c12.5-4.7 20.8-16.6 20.8-30l0-247.7c0-23-24.2-38-44.8-27.7l-9.6 4.8c-46.3 23.2-100.8 23.2-147.1 0c-35.1-17.6-75.4-22-113.5-12.5L64 48l0-16z"/></svg>
                     <span>Reported Posts</span>
                 </button>
             </div>
         </div>
         <div id="option-blocks" class="shadow rounded-md">
-            <div class="border border-gray-200 rounded-md flex-1 py-8 px-8 hidden" id="statistics">
+            <div class="border border-gray-200 rounded-md flex-1 py-8 px-8" id="statistics">
                 <h2 class="text-3xl text-green-500 font-semibold mb-8 text-center">Statistics</h2>
+
+                <?php
+                    $post_stats = mysqli_query($conn, "SELECT count(*) as count FROM posts");
+                    $tag_stats = mysqli_query($conn, "SELECT count(*) as count FROM tags");
+                ?>
+
                 <div class="mb-5">
                     <h3 class="font-semibold mb-3 text-lg">Posts</h3>
                     <div class="grid grid-cols-3 gap-5">
                         <div class="bg-gradient-to-tr from-blue-800 to-blue-400 text-white py-5 text-center rounded-lg">
-                            <h4 class="mb-1">Last 7 Days</h4>
-                            <span class="inline-block text-xl font-bold">5</span>
-                        </div>
-                        <div class="bg-gradient-to-tr from-green-800 to-green-400 text-white py-5 text-center rounded-lg">
                             <h4 class="mb-1">Last 30 Days</h4>
                             <span class="inline-block text-xl font-bold">5</span>
                         </div>
-                        <div class="bg-gradient-to-tr from-gray-800 to-gray-400 text-white py-5 text-center rounded-lg">
+                        <div class="bg-gradient-to-tr from-green-800 to-green-400 text-white py-5 text-center rounded-lg">
                             <h4 class="mb-1">Total</h4>
+                            <span class="inline-block text-xl font-bold"><?php echo (mysqli_fetch_assoc($post_stats)["count"]); ?></span>
+                        </div>
+                        <div class="bg-gradient-to-tr from-gray-800 to-gray-400 text-white py-5 text-center rounded-lg">
+                            <h4 class="mb-1">Reported</h4>
                             <span class="inline-block text-xl font-bold">5</span>
                         </div>
                     </div>
@@ -111,16 +117,16 @@
                     <h3 class="font-semibold mb-3 text-lg">Users</h3>
                     <div class="grid grid-cols-3 gap-5">
                         <div class="bg-gradient-to-tr from-orange-800 to-orange-400 text-white py-5 text-center rounded-lg">
-                            <h4 class="mb-1">Registred Users</h4>
-                            <span class="inline-block text-xl font-bold">5</span>
+                            <h4 class="mb-1">Users</h4>
+                            <span class="inline-block text-xl font-bold"><?php echo $counts_result[1]; ?></span>
                         </div>
                         <div class="bg-gradient-to-tr from-violet-800 to-violet-400 text-white py-5 text-center rounded-lg">
                             <h4 class="mb-1">Admins</h4>
-                            <span class="inline-block text-xl font-bold">5</span>
+                            <span class="inline-block text-xl font-bold"><?php echo $counts_result[0] + $counts_result[3]; ?></span>
                         </div>
                         <div class="bg-gradient-to-tr from-red-800 to-red-400 text-white py-5 text-center rounded-lg">
                             <h4 class="mb-1">Total</h4>
-                            <span class="inline-block text-xl font-bold">5</span>
+                            <span class="inline-block text-xl font-bold"><?php echo $counts_result[0] + $counts_result[1] + $counts_result[3]; ?></span>
                         </div>
                     </div>
                 </div>
@@ -144,7 +150,7 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div class="border-2 border-blue-500 py-5 text-center rounded-lg">
                             <h4 class="mb-1 font-semibold">Tags</h4>
-                            <span class="inline-block text-xl font-bold">5</span>
+                            <span class="inline-block text-xl font-bold"><?php echo (mysqli_fetch_assoc($tag_stats)["count"]); ?></span>
                         </div>
                         <div class="border-2 border-pink-500 py-5 text-center rounded-lg">
                             <h4 class="mb-1 font-semibold">Comments</h4>
@@ -153,10 +159,10 @@
                     </div>
                 </div>
             </div>
-            <div class="border border-gray-200 rounded-md flex-1 py-8 px-8" id="users">
+            <div class="border border-gray-200 rounded-md flex-1 py-8 px-8 hidden" id="users">
                 <h2 class="text-3xl text-green-500 font-semibold mb-8 text-center">Users</h2>
-                <h3 class="font-semibold text-lg mb-5">Super Admins <span class="text-gray-500 ml-7"><?php echo $counts_result[3]; ?></span></h3>
-                <div class="">
+                <h3 class="font-semibold text-lg mb-4"><span class="w-32 inline-block">Super Admins</span> <span class="text-gray-500 ml-7 w-7 h-7 text-sm bg-gray-200 rounded-full inline-flex justify-center items-center"><?php echo $counts_result[3]; ?></span></h3>
+                <div class="mb-8">
                     <?php
                         $super_admins = mysqli_query($conn, "SELECT * FROM users WHERE user_role = 4");
 
@@ -167,7 +173,7 @@
                                 <div class='flex items-center gap-5'>
                                     <img src='/assets/imgs/users/default.webp' class='w-16 h-16 rounded'>
                                     <div class=''>
-                                        <h4 class=''><a href='' class='text-blue-500 font-bold'>{$row["first_name"]} {$row["last_name"]}</a><span class='ml-5 text-gray-600'>&lt;{$row["email"]}&gt;</span></h4>
+                                        <h4 class=''><a href='/pages/user.php?id={$row["user_id"]}' class='text-blue-500 font-bold'>{$row["first_name"]} {$row["last_name"]}</a><span class='ml-5 text-gray-600'>&lt;{$row["email"]}&gt;</span></h4>
                                         <span class='text-sm text-gray-400'><span class='font-medium'>Joined On</span>: $formated_date</span>
                                     </div>
                                 </div>
@@ -176,8 +182,8 @@
                     ?>
                     
                 </div>
-                <h3 class="font-semibold text-lg mb-5">Admins <span class="text-gray-500 ml-7"><?php echo $counts_result[0]; ?></span></h3>
-                <div class="">
+                <h3 class="font-semibold text-lg mb-4"><span class="w-32 inline-block">Admins</span> <span class="text-gray-500 ml-7 w-7 h-7 text-sm bg-gray-200 rounded-full inline-flex justify-center items-center"><?php echo $counts_result[0]; ?></span></h3>
+                <div class="mb-8">
                     <?php
                         $admins = mysqli_query($conn, "SELECT * FROM users WHERE user_role = 1");
 
@@ -192,18 +198,22 @@
                                             <h4 class=''><a href='' class='text-blue-500 font-bold'>{$row["first_name"]} {$row["last_name"]}</a><span class='ml-5 text-gray-600'>&lt;{$row["email"]}&gt;</span></h4>
                                             <span class='text-sm text-gray-400'><span class='font-medium'>Joined On</span>: $formated_date</span>
                                         </div>
-                                    </div>
-                                    <div class='flex gap-3'>
-                                        <button type='button' class='px-4 py-1.5 rounded bg-gradient-to-tr from-blue-800 to-blue-400 flex items-center justify-center gap-2 text-white w-32'>
-                                            <svg xmlns='http://www.w3.org/2000/svg' class='w-4 h-4 fill-white' viewBox='0 0 320 512'><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d='M2 334.5c-3.8 8.8-2 19 4.6 26l136 144c4.5 4.8 10.8 7.5 17.4 7.5s12.9-2.7 17.4-7.5l136-144c6.6-7 8.4-17.2 4.6-26s-12.5-14.5-22-14.5l-72 0 0-288c0-17.7-14.3-32-32-32L128 0C110.3 0 96 14.3 96 32l0 288-72 0c-9.6 0-18.2 5.7-22 14.5z'/></svg>
-                                            <span class='text-sm'>Downgrade</span>
-                                        </button>
-                                        <button type='button' class='px-4 py-1.5 rounded bg-gradient-to-tr from-red-800 to-red-400 flex items-center justify-center gap-2 text-white w-28'>
-                                            <svg xmlns='http://www.w3.org/2000/svg' class='w-4 h-4 fill-white' viewBox='0 0 512 512'><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d='M367.2 412.5L99.5 144.8C77.1 176.1 64 214.5 64 256c0 106 86 192 192 192c41.5 0 79.9-13.1 111.2-35.5zm45.3-45.3C434.9 335.9 448 297.5 448 256c0-106-86-192-192-192c-41.5 0-79.9 13.1-111.2 35.5L412.5 367.2zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256z'/></svg>
-                                            <span class='text-sm'>Block</span>
-                                        </button>
-                                    </div>
-                                </div>";
+                                    </div>";
+
+                                    if ($role == "super_admin") {
+                                        echo "<div class='flex gap-3'>
+                                            <button type='button' class='px-4 py-1.5 rounded bg-gradient-to-tr from-blue-800 to-blue-400 flex items-center justify-center gap-2 text-white w-32'>
+                                                <svg xmlns='http://www.w3.org/2000/svg' class='w-4 h-4 fill-white' viewBox='0 0 320 512'><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d='M2 334.5c-3.8 8.8-2 19 4.6 26l136 144c4.5 4.8 10.8 7.5 17.4 7.5s12.9-2.7 17.4-7.5l136-144c6.6-7 8.4-17.2 4.6-26s-12.5-14.5-22-14.5l-72 0 0-288c0-17.7-14.3-32-32-32L128 0C110.3 0 96 14.3 96 32l0 288-72 0c-9.6 0-18.2 5.7-22 14.5z'/></svg>
+                                                <span class='text-sm'>Downgrade</span>
+                                            </button>
+                                            <button type='button' class='px-4 py-1.5 rounded bg-gradient-to-tr from-red-800 to-red-400 flex items-center justify-center gap-2 text-white w-28'>
+                                                <svg xmlns='http://www.w3.org/2000/svg' class='w-4 h-4 fill-white' viewBox='0 0 512 512'><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d='M367.2 412.5L99.5 144.8C77.1 176.1 64 214.5 64 256c0 106 86 192 192 192c41.5 0 79.9-13.1 111.2-35.5zm45.3-45.3C434.9 335.9 448 297.5 448 256c0-106-86-192-192-192c-41.5 0-79.9 13.1-111.2 35.5L412.5 367.2zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256z'/></svg>
+                                                <span class='text-sm'>Block</span>
+                                            </button>
+                                        </div>";
+                                    }
+                                    
+                                echo "</div>";
                             }
                         } else {
                             echo '<p class="mb-5 text-gray-600 ml-8">No admins were found. Try to upgrade users to become admins</p>';
@@ -211,7 +221,7 @@
                     ?>
                     
                 </div>
-                <h3 class="font-semibold text-lg mb-5">Users <span class="text-gray-500 ml-7"><?php echo $counts_result[1]; ?></span></h3>
+                <h3 class="font-semibold text-lg mb-4"><span class="w-32 inline-block">Users</span> <span class="text-gray-500 ml-7 w-7 h-7 text-sm bg-gray-200 rounded-full inline-flex justify-center items-center"><?php echo $counts_result[1]; ?></span></h3>
                 <div>
                     <?php
                         $users = mysqli_query($conn, "SELECT * FROM users WHERE user_role = 2");
@@ -228,12 +238,17 @@
                                             <span class='text-sm text-gray-400'><span class='font-medium'>Joined On</span>: $formated_date</span>
                                         </div>
                                     </div>
-                                    <div class='flex gap-3'>
-                                        <button type='button' class='px-4 py-1.5 rounded bg-gradient-to-tr from-green-800 to-green-400 flex items-center justify-center gap-2 text-white w-28'>
-                                            <svg xmlns='http://www.w3.org/2000/svg' class='w-4 h-4 fill-white' viewBox='0 0 320 512'><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d='M318 177.5c3.8-8.8 2-19-4.6-26l-136-144C172.9 2.7 166.6 0 160 0s-12.9 2.7-17.4 7.5l-136 144c-6.6 7-8.4 17.2-4.6 26S14.4 192 24 192l72 0 0 288c0 17.7 14.3 32 32 32l64 0c17.7 0 32-14.3 32-32l0-288 72 0c9.6 0 18.2-5.7 22-14.5z'/></svg>
-                                            <span class='text-sm'>Upgrade</span>
-                                        </button>
-                                        <button type='button' class='px-4 py-1.5 rounded bg-gradient-to-tr from-red-800 to-red-400 flex items-center justify-center gap-2 text-white w-28'>
+                                    <div class='flex gap-3'>";
+                                        
+                                        if ($role == "super_admin") {
+                                            echo 
+                                            "<button type='button' class='px-4 py-1.5 rounded bg-gradient-to-tr from-green-800 to-green-400 flex items-center justify-center gap-2 text-white w-28'>
+                                                <svg xmlns='http://www.w3.org/2000/svg' class='w-4 h-4 fill-white' viewBox='0 0 320 512'><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d='M318 177.5c3.8-8.8 2-19-4.6-26l-136-144C172.9 2.7 166.6 0 160 0s-12.9 2.7-17.4 7.5l-136 144c-6.6 7-8.4 17.2-4.6 26S14.4 192 24 192l72 0 0 288c0 17.7 14.3 32 32 32l64 0c17.7 0 32-14.3 32-32l0-288 72 0c9.6 0 18.2-5.7 22-14.5z'/></svg>
+                                                <span class='text-sm'>Upgrade</span>
+                                            </button>";
+                                        }
+                                        
+                                        echo "<button type='button' class='px-4 py-1.5 rounded bg-gradient-to-tr from-red-800 to-red-400 flex items-center justify-center gap-2 text-white w-28'>
                                             <svg xmlns='http://www.w3.org/2000/svg' class='w-4 h-4 fill-white' viewBox='0 0 512 512'><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d='M367.2 412.5L99.5 144.8C77.1 176.1 64 214.5 64 256c0 106 86 192 192 192c41.5 0 79.9-13.1 111.2-35.5zm45.3-45.3C434.9 335.9 448 297.5 448 256c0-106-86-192-192-192c-41.5 0-79.9 13.1-111.2 35.5L412.5 367.2zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256z'/></svg>
                                             <span class='text-sm'>Block</span>
                                         </button>
@@ -246,19 +261,20 @@
                     ?>
                 </div>
             </div>
-            <div class="border border-gray-200 rounded-md flex-1 py-8 px-12 hidden" id="posts">
+            <div class="border border-gray-200 rounded-md flex-1 py-8 px-8 hidden" id="posts">
                 <h2 class="text-3xl text-green-500 font-semibold mb-8 text-center">Published Posts</h2>
                 <div>
                     <?php
-                        $posts = mysqli_query($conn, "SELECT * FROM posts limit 0,5");
+                        $posts = mysqli_query($conn, "SELECT * FROM posts join users on posts.post_author = users.user_id ORDER by post_date DESC limit 0,5");
 
                         while ($row = mysqli_fetch_assoc($posts)) {
+                            $formated_datetime = format_datetime($row["post_date"]);
                             echo
                             "<div class='mb-8'>
                                 <div class='flex justify-between items-center'>
                                     <div>
-                                        <h3 class='font-semibold text-lg text-blue-500'><a href='#'>Coding Life</a></h3>
-                                        <h4 class='text-gray-400 text-sm mb-3'><a href='#'>Anass Boutaib</a> / <span>16 Dec 2024 - 15:13</span></h4>
+                                        <h3 class='font-semibold text-lg text-blue-500'><a href='/view.php?id={$row["post_id"]}'>{$row["post_title"]}</a></h3>
+                                        <h4 class='text-gray-400 text-sm mb-3'><a href='/pages/user.php?id={$row["user_id"]}' class='text-gray-600 font-medium'>{$row["first_name"]} {$row["last_name"]}</a> / <span>$formated_datetime</span></h4>
                                     </div>
                                     <div class='flex gap-3'>
                                         <button type='button' class='px-4 py-2 rounded bg-gradient-to-tr from-blue-600 to-blue-400 shadow-lg flex gap-3 items-center'>
@@ -271,7 +287,7 @@
                                         </button>
                                     </div>
                                 </div>
-                                <p class='text-gray-700'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit ab quod ullam commodi magnam assumenda corporis! Quisquam dolores soluta impedit, aliquam perferendis ipsa eum consectetur earum nihil, reiciendis incidunt iste!</p>
+                                <p class='text-gray-700'>{$row["post_content"]}</p>
                             </div>";
                         }
                     ?>
@@ -311,23 +327,39 @@
                         $stmt = mysqli_query($conn, "SELECT tags.tag_id, tag_name, count(post_tags.tag_id) as count from tags left join post_tags on tags.tag_id = post_tags.tag_id group by tag_id");
                         while($row = mysqli_fetch_assoc($stmt)) {
                             echo
-                            "<div class='flex justify-between bg-gray-600 text-white px-4 py-2 rounded-md gap-3'>
+                            "<a href='/view.php?tag={$row["tag_id"]}' class='flex justify-between bg-gray-600 text-white px-4 py-2 rounded-md gap-3'>
                                 <span>{$row["tag_name"]}</span>
                                 <span>{$row["count"]}</span>
-                            </div>";
+                            </a>";
                         }
 
                     ?>
                 </div>
             </div>
-            <div class="border border-gray-200 rounded-md flex-1 py-8 px-12 hidden" id="delete-account">
-                <h2 class="text-3xl text-green-500 font-semibold mb-8 text-center">Delete Account</h2>
-                <p class="font-semibold mb-5">If you delete your account, all your data will be removed and this cannot be undone.</p>
-                <p class="font-semibold mb-5">Are you sure you want to delete your account? </p>
-                <form action="" method="POST">
-                    <input type="hidden" value="<?php echo $user_row["user_id"]; ?>" name="user_id">
-                    <button type="submit" class="px-7 py-2 bg-red-500 rounded text-white">Confirm Delete</button>
-                </form>
+            <div class="border border-gray-200 rounded-md flex-1 py-8 px-8 hidden" id="reported-posts">
+                <h2 class="text-3xl text-green-500 font-semibold mb-8 text-center">Reported Posts</h2>
+                <div>
+                <div class='mb-8'>
+                    <div class='flex justify-between items-center'>
+                        <div>
+                            <h3 class='font-semibold text-lg text-blue-500'><a href='#'>Coding Life</a></h3>
+                            <h4 class='text-gray-400 text-sm mb-3'><a href='#' class="text-gray-600 font-medium">Anass Boutaib</a> / <span>16 Dec 2024 - 15:13</span></h4>
+                        </div>
+                        <div class='flex gap-3 items-center'>
+                            <span class="text-gray-500 text-sm font-semibold mr-7">Reports: <span>5</span></span>
+                            <button type='button' class='px-4 py-2 rounded bg-gradient-to-tr from-green-600 to-green-400 shadow-lg flex gap-3 items-center'>
+                                <svg xmlns="http://www.w3.org/2000/svg" class='w-3.5 h-3.5 fill-white' viewBox="0 0 448 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>
+                                <span class='text-white text-xs font-medium'>Mark Safe</span>
+                            </button>
+                            <button type='button' class='px-4 py-2 rounded bg-gradient-to-tr from-red-600 to-red-400 shadow-lg flex gap-3 items-center'>
+                                <svg xmlns='http://www.w3.org/2000/svg' class='w-3.5 h-3.5 fill-white' viewBox='0 0 448 512'><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d='M135.2 17.7C140.6 6.8 151.7 0 163.8 0L284.2 0c12.1 0 23.2 6.8 28.6 17.7L320 32l96 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 96C14.3 96 0 81.7 0 64S14.3 32 32 32l96 0 7.2-14.3zM32 128l384 0 0 320c0 35.3-28.7 64-64 64L96 512c-35.3 0-64-28.7-64-64l0-320zm96 64c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16z'/></svg>
+                                <span class='text-white text-xs font-medium'>Delete</span>
+                            </button>
+                        </div>
+                    </div>
+                    <p class='text-gray-700'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit ab quod ullam commodi magnam assumenda corporis! Quisquam dolores soluta impedit, aliquam perferendis ipsa eum consectetur earum nihil, reiciendis incidunt iste!</p>
+                </div>
+                </div>
             </div>
         </div>
     </div>
