@@ -105,9 +105,16 @@
             <div class="blog shadow rounded-lg overflow-hidden">
                 
                 <div class="h-80 bg-cover bg-center relative group" style="background-image: url('<?php echo $post_image; ?>')">
-                    <div class="absolute top-5 right-5 opacity-0 group-hover:opacity-100 transition-opacity post-menu-btn">
-                        <button type="button" class="font-bold text-sm tracking-wider w-8 h-8 bg-gray-100 border-2 border-gray-600 text-gray-600 pb-0.5 rounded-full flex justify-center items-center">•••</button>
-                    </div>
+
+                    <!-- Side Menu button for admins, super admins and post author -->
+
+                    <?php if($role == 'admin' || $role == 'super_admin' || ($role == 'user' && $id == $row["post_author"])): ?>
+
+                        <div class="absolute top-5 right-5 opacity-0 group-hover:opacity-100 transition-opacity post-menu-btn">
+                            <button type="button" class="font-bold text-sm tracking-wider w-8 h-8 bg-gray-100 border-2 border-gray-600 text-gray-600 pb-0.5 rounded-full flex justify-center items-center">•••</button>
+                        </div>
+
+                    <?php endif; ?>
                 </div>
                 <div class="blog-header border border-gray-200 px-5 py-4">
                     <h1 class="text-center mb-4 text-xl font-semibold text-green-600"><a href="#"><?php echo $row["post_title"]; ?></a></h1>
@@ -311,7 +318,7 @@
             <div class="px-7 py-10">
                 <p class="font-medium">This will delete the post permanently. Are you sure you want to proceed?</p>
                 <form action="/requests/delete-post.php" method="POST" class="mt-6">
-                    <input type="hidden" value="<?php echo $row["post_id"]; ?>">
+                    <input type="hidden" value="<?php echo $row["post_id"]; ?>" name="post_id">
                     <button class="px-5 py-2 rounded bg-red-500 text-white">Delete</button>
                 </form>
             </div>

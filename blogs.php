@@ -133,34 +133,6 @@
                         </div>";
                     }
                 ?>
-                <div class="blog shadow rounded-lg overflow-hidden flex flex-col">
-                    <div class="h-56 bg-[url('/assets/imgs/test2.jpg')] bg-cover bg-center">
-                    </div>
-                    <div class="blog-header border border-gray-200 px-5 py-4 flex-1">
-                        <h2 class="text-center mb-4 text-xl font-semibold text-green-600"><a href="#">The power of programming languages</a></h2>
-                        <p class="text-gray-600 text-center"><span class="font-semibold">Ahmed Taoudi</span> • <span class="text-sm text-gray-500">10 Jul 2024 - 23:40</span></p>
-                        <p class="mt-4 text-gray-700">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Sit, ab officiis adipisci nulla, accusamus consectetur labore totam id soluta sapiente dolorum architecto tempora odio, quisquam non beatae iste eos nobis?<p>
-                        <div class="tags mt-5 flex gap-2">
-                            <button type="button" class="inline-block px-3 py-2 bg-gray-800 text-white rounded-md">IT</button>
-                            <button type="button" class="inline-block px-3 py-2 bg-gray-800 text-white rounded-md">Programming</button>
-                            <button type="button" class="inline-block px-3 py-2 bg-gray-800 text-white rounded-md">PHP</button>
-                            <button type="button" class="inline-block px-3 py-2 bg-gray-800 text-white rounded-md">JS</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="blog shadow rounded-lg overflow-hidden flex flex-col">
-                    <div class="h-56 bg-[url('assets/imgs/test3.jpg')] bg-cover bg-center">
-                    </div>
-                    <div class="blog-header border border-gray-200 px-5 py-4 flex-1">
-                        <h2 class="text-center mb-4 text-xl font-semibold text-green-600"><a href="#">How to plan ahead?</a></h2>
-                        <p class="text-gray-600 text-center"><span class="font-semibold">AbdelHafid Ait Lmkhtar</span> • <span class="text-sm text-gray-500">6 Jun 2024 - 12:31</span></p>
-                        <p class="mt-4 text-gray-700">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Sit, ab officiis adipisci nulla, accusamus consectetur labore totam id soluta sapiente dolorum architecto tempora odio, quisquam non beatae iste eos nobis?<p>
-                        <div class="tags mt-5 flex gap-2">
-                            <button type="button" class="inline-block px-3 py-2 bg-gray-800 text-white rounded-md">Planning</button>
-                            <button type="button" class="inline-block px-3 py-2 bg-gray-800 text-white rounded-md">Life</button>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
