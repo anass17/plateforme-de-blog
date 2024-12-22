@@ -12,6 +12,7 @@
 
         require_once "connect/db-connect.php";
         require_once "auth/JWT.php";
+        require_once "inc/functions.php";
 
         $id = null;
         $email = null;
@@ -67,8 +68,8 @@
 
     <div class="max-w-7xl mx-auto px-3 py-10 flex gap-4 items-start">
         <div class="author-window border border-gray-300 rounded-lg p-6 w-[40%]">
-            <h2 class="text-green-500 font-semibold text-lg"><?php echo $row["first_name"] . ' ' . $row["last_name"]; ?></h2>
-            <span class="text-gray-500 text-sm">Joined Since: 08 Apr 2018</span>
+            <h2 class="text-green-500 font-semibold text-lg"><a href="/pages/user.php?id=<?php echo $row["user_id"]; ?>"><?php echo $row["first_name"] . ' ' . $row["last_name"]; ?></a></h2>
+            <span class="text-gray-500 text-sm">Joined Since: <?php echo format_date($row["registration_date"]); ?></span>
             <div class="mt-5">
 
                 <?php

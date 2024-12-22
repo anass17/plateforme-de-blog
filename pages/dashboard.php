@@ -214,7 +214,7 @@
                                     <div class='flex items-center gap-5'>
                                         <img src='/assets/imgs/users/default.webp' class='w-16 h-16 rounded'>
                                         <div class=''>
-                                            <h4 class=''><a href='' class='text-blue-500 font-bold'>{$row["first_name"]} {$row["last_name"]}</a><span class='ml-5 text-gray-600'>&lt;{$row["email"]}&gt;</span></h4>
+                                            <h4 class=''><a href='/pages/user.php?id={$row["user_id"]}' class='text-blue-500 font-bold'>{$row["first_name"]} {$row["last_name"]}</a><span class='ml-5 text-gray-600'>&lt;{$row["email"]}&gt;</span></h4>
                                             <span class='text-sm text-gray-400'><span class='font-medium'>Joined On</span>: $formated_date</span>
                                         </div>
                                     </div>";
@@ -253,7 +253,7 @@
                                     <div class='flex items-center gap-5'>
                                         <img src='/assets/imgs/users/default.webp' class='w-16 h-16 rounded'>
                                         <div class=''>
-                                            <h4 class=''><a href='' class='text-blue-500 font-bold'>{$row["first_name"]} {$row["last_name"]}</a><span class='ml-5 text-gray-600'>&lt;{$row["email"]}&gt;</span></h4>
+                                            <h4 class=''><a href='/pages/user.php?id={$row["user_id"]}' class='text-blue-500 font-bold'>{$row["first_name"]} {$row["last_name"]}</a><span class='ml-5 text-gray-600'>&lt;{$row["email"]}&gt;</span></h4>
                                             <span class='text-sm text-gray-400'><span class='font-medium'>Joined On</span>: $formated_date</span>
                                         </div>
                                     </div>
