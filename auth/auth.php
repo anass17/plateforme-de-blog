@@ -54,7 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Check if user exists
 
-        $stmt = $conn -> prepare("select first_name, last_name, email, password, user_id, role_name, user_image from users join roles on users.user_id = roles.role_id where email = ?");
+        $stmt = $conn -> prepare("select first_name, last_name, email, password, user_id, role_name, user_image from users join roles on users.user_role = roles.role_id where email = ?");
 
         $stmt -> bind_param("s", $email);
 
@@ -67,7 +67,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 if (password_verify($password, $row["password"])) {
                     createJWTCookie($row['user_id'], $row["email"], $row["role_name"], $row["first_name"], $row["last_name"], $row["user_image"]);
-                    header('Location: ../blogs.php');
+                    if ($row["role_name"] == "admin") {
+                        header('Location: ../pages/dashboard.php');
+                    } else {
+                        header('Location: ../blogs.php');
+                    }
+                    exit;
                 } else {
                     setLoginError("Login credentials you provided were incorrect");
                 }
@@ -140,7 +145,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 if($stmt -> execute()) {
                     $lastInsertedId = $conn -> insert_id;
                     createJWTCookie($lastInsertedId, $email, "user", $first_name, $last_name, '');
-                    header('Location: ../blogs.php');
+                    header('Location: ../pages/profile.php');
                 } else {
                     setSignupError("Could not process your request");
                 }
