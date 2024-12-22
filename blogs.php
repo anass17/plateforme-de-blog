@@ -58,12 +58,19 @@
             <?php 
                 if (isset($_SESSION["post_error_msg"])) {
                     echo 
-                    "<div class='max-w-lg mx-auto bg-red-200 px-8 py-5 rounded-md mb-10 text-center'>
+                    "<div class='max-w-lg mx-auto bg-red-200 border border-red-300 px-8 py-5 rounded-md mb-10 text-center'>
                         <h2 class='mb-3 font-bold text-lg'>Error!</h2>
                         <p class='text-center font-semibold'>{$_SESSION["post_error_msg"]}</p>
                     </div>";
-                    session_destroy();
+                    
+                } else if (isset($_SESSION["post_success_msg"])) {
+                    echo 
+                    "<div class='max-w-lg mx-auto bg-green-200 border border-green-300 px-8 py-5 rounded-md mb-10 text-center'>
+                        <h2 class='mb-3 font-bold text-lg'>Awesome!</h2>
+                        <p class='text-center font-semibold'>{$_SESSION["post_success_msg"]}</p>
+                    </div>";
                 }
+                session_destroy();
             ?>
             <div class="flex gap-3 justify-center mb-8">
                 <button class="add-blog-btn px-4 py-1.5 rounded-md bg-blue-500 text-white flex items-center justify-center gap-3">
@@ -158,74 +165,90 @@
         </div>
     </div>
 
-    <div class="w-full h-screen bg-black fixed bg-opacity-70 hidden justify-center items-center top-0 left-0 add-blog-modal">
-        <div class="w-full max-w-lg bg-white rounded-lg shadow">
-            <div class="modal-header flex justify-between px-7 py-4 border-b border-gray-300">
-                <h2 class="font-semibold text-2xl">Write a Post</h2>
-                <button type="button" class="font-bold text-2xl text-red-500 close-btn">X</button>
-            </div>
-            <div class="px-7 py-5">
-                <form action="requests/add-blog.php" method="POST" enctype="multipart/form-data">
-                    <div class="w-full mb-4">
-                        <label for="blog-title" class="block mb-1">Title *</label>
-                        <input type="text" id="blog-title" name="blog-title" class="w-full px-3 py-2 border border-gray-300 rounded outline-none" placeholder="Enter your email">
-                    </div>
-                    <div class="mb-4">
-                        <label for="blog-body" class="block mb-1">Blog Body *</label>
-                        <textarea id="blog-body" name="blog-body" class="w-full px-3 py-2 border border-gray-300 rounded outline-none resize-none h-32" placeholder="Enter your message"></textarea>
-                    </div>
-                    <div class="mb-4">
-                        <label for="blog-tags" class="block mb-1">Tags *</label>
-                        <div class="">
-                            <div class="bg-gray-200 mr-1 px-4 py-1.5 rounded-md inline-flex justify-center items-center gap-2">
-                                <span class="tags-count">0</span>Tags
-                            </div>
-                            <button type="button" class="add-tags-btn bg-blue-500 text-white px-4 py-1.5 rounded-md inline-flex justify-center items-center gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="fill-white w-3.5 h-3.5" viewBox="0 0 448 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z"/></svg>    
-                                <span>Add</span>
-                            </button>
+    <?php if($role != null): ?>
+        <div class="w-full h-screen bg-black fixed bg-opacity-70 hidden justify-center items-center top-0 left-0 add-blog-modal">
+            <div class="w-full max-w-lg bg-white rounded-lg shadow">
+                <div class="modal-header flex justify-between px-7 py-4 border-b border-gray-300">
+                    <h2 class="font-semibold text-2xl">Write a Post</h2>
+                    <button type="button" class="font-bold text-2xl text-red-500 close-btn">X</button>
+                </div>
+                <div class="px-7 py-5">
+                    <form action="requests/add-blog.php" method="POST" enctype="multipart/form-data">
+                        <div class="w-full mb-4">
+                            <label for="blog-title" class="block mb-1">Title *</label>
+                            <input type="text" id="blog-title" name="blog-title" class="w-full px-3 py-2 border border-gray-300 rounded outline-none" placeholder="Enter your email">
                         </div>
-                        <input type="hidden" id="blog-tags" name="blog-tags" class="w-full px-3 py-2 border border-gray-300 rounded outline-none resize-none" readonly>
-                    </div>
-                    <div class="w-full mb-4">
-                        <p class="block mb-1">Blog Image</p>
-                        <label for="blog-image" class="w-full h-20 flex justify-center items-center cursor-pointer bg-gray-100 border border-gray-200 rounded gap-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 fill-green-500" viewBox="0 0 640 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M144 480C64.5 480 0 415.5 0 336c0-62.8 40.2-116.2 96.2-135.9c-.1-2.7-.2-5.4-.2-8.1c0-88.4 71.6-160 160-160c59.3 0 111 32.2 138.7 80.2C409.9 102 428.3 96 448 96c53 0 96 43 96 96c0 12.2-2.3 23.8-6.4 34.6C596 238.4 640 290.1 640 352c0 70.7-57.3 128-128 128l-368 0zm79-217c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l39-39L296 392c0 13.3 10.7 24 24 24s24-10.7 24-24l0-134.1 39 39c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-80-80c-9.4-9.4-24.6-9.4-33.9 0l-80 80z"/></svg>    
-                            <span class="text-md font-semibold">Upload an image</span>
-                        </label>
-                        <input type="file" name="blog-image" id="blog-image" class="hidden">
-                    </div>
-                    <button type="submit" class="px-6 py-2 font-semibold rounded bg-green-500 text-white">POST</button>
-                </form>
+                        <div class="mb-4">
+                            <label for="blog-body" class="block mb-1">Blog Body *</label>
+                            <textarea id="blog-body" name="blog-body" class="w-full px-3 py-2 border border-gray-300 rounded outline-none resize-none h-32" placeholder="Enter your message"></textarea>
+                        </div>
+                        <div class="mb-4">
+                            <label for="blog-tags" class="block mb-1">Tags *</label>
+                            <div class="">
+                                <div class="bg-gray-200 mr-1 px-4 py-1.5 rounded-md inline-flex justify-center items-center gap-2">
+                                    <span class="tags-count">0</span>Tags
+                                </div>
+                                <button type="button" class="add-tags-btn bg-blue-500 text-white px-4 py-1.5 rounded-md inline-flex justify-center items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="fill-white w-3.5 h-3.5" viewBox="0 0 448 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z"/></svg>    
+                                    <span>Add</span>
+                                </button>
+                            </div>
+                            <input type="hidden" id="blog-tags" name="blog-tags" class="w-full px-3 py-2 border border-gray-300 rounded outline-none resize-none" readonly>
+                        </div>
+                        <div class="w-full mb-4">
+                            <p class="block mb-1">Blog Image</p>
+                            <label for="blog-image" class="w-full h-20 flex justify-center items-center cursor-pointer bg-gray-100 border border-gray-200 rounded gap-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 fill-green-500" viewBox="0 0 640 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M144 480C64.5 480 0 415.5 0 336c0-62.8 40.2-116.2 96.2-135.9c-.1-2.7-.2-5.4-.2-8.1c0-88.4 71.6-160 160-160c59.3 0 111 32.2 138.7 80.2C409.9 102 428.3 96 448 96c53 0 96 43 96 96c0 12.2-2.3 23.8-6.4 34.6C596 238.4 640 290.1 640 352c0 70.7-57.3 128-128 128l-368 0zm79-217c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l39-39L296 392c0 13.3 10.7 24 24 24s24-10.7 24-24l0-134.1 39 39c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-80-80c-9.4-9.4-24.6-9.4-33.9 0l-80 80z"/></svg>    
+                                <span class="text-md font-semibold">Upload an image</span>
+                            </label>
+                            <input type="file" name="blog-image" id="blog-image" class="hidden">
+                        </div>
+                        <button type="submit" id="add-post-submit" class="px-6 py-2 font-semibold rounded bg-green-500 text-white">POST</button>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="w-full h-screen bg-black fixed bg-opacity-70 hidden justify-center items-center top-0 left-0 add-tags-modal z-30">
-        <div class="w-full max-w-lg bg-white rounded-lg shadow">
-            <div class="modal-header flex justify-between px-7 py-4 border-b border-gray-300">
-                <h2 class="font-semibold text-2xl">Select blog tags</h2>
-                <button type="button" class="font-bold text-2xl text-red-500 close-btn">X</button>
-            </div>
-            <div class="px-7 py-5">
-                <form action="" method="POST">
-                    <div class="w-full mb-4">
-                        <label for="tag-search" class="block mb-2 font-semibold">Search for tags</label>
-                        <input type="text" id="tag-search" name="tag-search" class="w-full px-3 py-2 border border-gray-300 rounded outline-none" placeholder="Type in something ...">
-                    </div>
-                    <h2 class="mb-2 font-semibold">Available Tags</h2>
-                    <div class="available-tags *:px-4 *:py-1.5 *:rounded-md *:border *:border-gray-200 mb-6 flex gap-3 flex-wrap content-start max-h-60">
-                        
-                        <?php
-                            while($row = mysqli_fetch_assoc($tags)) {
-                                echo "<button type='button' data-id='{$row["tag_id"]}' class='bg-gray-100'>{$row["tag_name"]}</button>";
-                            }
-                        ?>
-                    </div>
-                </form>
+        <div class="w-full h-screen bg-black fixed bg-opacity-70 hidden justify-center items-center top-0 left-0 add-tags-modal z-30">
+            <div class="w-full max-w-lg bg-white rounded-lg shadow">
+                <div class="modal-header flex justify-between px-7 py-4 border-b border-gray-300">
+                    <h2 class="font-semibold text-2xl">Select blog tags</h2>
+                    <button type="button" class="font-bold text-2xl text-red-500 close-btn">X</button>
+                </div>
+                <div class="px-7 py-5">
+                    <form action="" method="POST">
+                        <div class="w-full mb-4">
+                            <label for="tag-search" class="block mb-2 font-semibold">Search for tags</label>
+                            <input type="text" id="tag-search" name="tag-search" class="w-full px-3 py-2 border border-gray-300 rounded outline-none" placeholder="Type in something ...">
+                        </div>
+                        <h2 class="mb-2 font-semibold">Available Tags</h2>
+                        <div class="available-tags *:px-4 *:py-1.5 *:rounded-md *:border *:border-gray-200 mb-6 flex gap-3 flex-wrap content-start max-h-60">
+                            
+                            <?php
+                                while($row = mysqli_fetch_assoc($tags)) {
+                                    echo "<button type='button' data-id='{$row["tag_id"]}' class='bg-gray-100'>{$row["tag_name"]}</button>";
+                                }
+                            ?>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
+    <?php else: ?>
+
+        <div class="w-full h-screen bg-black fixed bg-opacity-70 hidden justify-center items-center top-0 left-0 add-blog-modal">
+            <div class="w-full max-w-lg bg-white rounded-lg shadow">
+                <div class="modal-header flex justify-end px-7 pt-4">
+                    <button type="button" class="font-bold text-2xl text-red-500 close-btn">X</button>
+                </div>
+                <div class="text-center py-7">
+                    <p class="mb-8 text-lg">Login to write a post</p>
+                    <a href="auth/login.php" class="px-7 py-2 rounded bg-blue-500 inline-block font-semibold text-white">Login</a>
+                </div>
+            </div>
+        </div>
+
+    <?php endif; ?>
 
     <script src="assets/js/script.js"></script>
 

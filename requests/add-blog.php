@@ -35,8 +35,8 @@
 
         // Get Details
 
-        $blog_title = isset($_POST["blog-title"]) ? $_POST["blog-title"] : "";
-        $blog_body = isset($_POST["blog-body"]) ? $_POST["blog-body"] : "";
+        $blog_title = isset($_POST["blog-title"]) ? htmlspecialchars($_POST["blog-title"]) : "";
+        $blog_body = isset($_POST["blog-body"]) ? htmlspecialchars($_POST["blog-body"]) : "";
         $blog_tags = isset($_POST["blog-tags"]) ? $_POST["blog-tags"] : "";
 
         // Data Validation
@@ -45,7 +45,7 @@
             setError("Post Title was too short");
         }
 
-        if (strlen($blog_title) < 20) {
+        if (strlen($blog_body) < 20) {
             setError("Post Body was too short");
         }
 
