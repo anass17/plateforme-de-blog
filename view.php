@@ -1,3 +1,7 @@
+<?php
+    session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -66,7 +70,28 @@
         }
     ?>
 
+    <?php 
+        if (isset($_SESSION["post_error_msg"])) {
+            echo 
+            "<div class='max-w-lg mx-auto bg-red-200 border border-red-300 px-8 py-5 rounded-md mt-10 text-center'>
+                <h2 class='mb-3 font-bold text-lg'>Error!</h2>
+                <p class='text-center font-semibold'>{$_SESSION["post_error_msg"]}</p>
+            </div>";
+            
+        } else if (isset($_SESSION["post_success_msg"])) {
+            echo 
+            "<div class='max-w-lg mx-auto bg-green-200 border border-green-300 px-8 py-5 rounded-md mt-10 text-center'>
+                <h2 class='mb-3 font-bold text-lg'>Awesome!</h2>
+                <p class='text-center font-semibold'>{$_SESSION["post_success_msg"]}</p>
+            </div>";
+        }
+        session_destroy();
+    ?>
+
     <div class="max-w-7xl mx-auto px-3 py-10 flex gap-4 items-start">
+
+        <!-- Author Block -->
+
         <div class="author-window border border-gray-300 rounded-lg p-6 w-[40%]">
             <h2 class="text-green-500 font-semibold text-lg"><a href="/pages/user.php?id=<?php echo $row["user_id"]; ?>"><?php echo $row["first_name"] . ' ' . $row["last_name"]; ?></a></h2>
             <span class="text-gray-500 text-sm">Joined Since: <?php echo format_date($row["registration_date"]); ?></span>
@@ -102,6 +127,9 @@
             </div>
             
         </div>
+
+        <!-- Post Block -->
+
         <div class="w-[60%]">
             <div class="blog shadow rounded-lg overflow-hidden">
                 
@@ -119,7 +147,7 @@
                 </div>
                 <div class="blog-header border border-gray-200 px-5 py-4">
                     <h1 class="text-center mb-4 text-xl font-semibold text-green-600"><a href="#"><?php echo $row["post_title"]; ?></a></h1>
-                    <p class="text-gray-600 text-center"><span class="font-semibold"><?php echo $row["first_name"] . ' ' . $row["last_name"]; ?></span> • <span class="text-sm text-gray-500"><?php echo $formated_datetime; ?></span></p>
+                    <p class="text-gray-600 text-center"><span class="font-semibold"><?php echo $row["first_name"] . ' ' . $row["last_name"]; ?></span> • <span class="text-sm text-gray-500"><?php echo $formated_datetime; ?></span><?php if($row["is_modified"] == true) {echo "<span class='ml-3'>(modified)</span>";} ?></p>
                     
                     <div class="tags mt-3 mb-2 flex gap-2 justify-center">
 
@@ -131,11 +159,14 @@
 
                             $stmt -> bind_param("i", $_GET["id"]);
 
+                            $tags_list = "";
+
                             if ($stmt -> execute()) {
                                 $result = $stmt -> get_result();
 
                                 if ($result -> num_rows > 0) {
                                     while($tags_row = $result -> fetch_assoc()) {
+                                        $tags_list .= $tags_row["tag_id"] . ';';
                                         echo "<button type='button' class='inline-block px-3 py-2 text-sm bg-gray-800 text-white rounded-md font-semibold'>{$tags_row["tag_name"]}</button>";
                                     }
                                 } else {
@@ -294,7 +325,7 @@
                 <button type="button" class="close-btn font-bold text-2xl text-red-500">X</button>
             </div>
             <div class="px-7 py-10">
-                <button type="button" class="mb-5 font-semibold text-lg text-gray-700 mx-auto flex gap-3 items-center justify-center">
+                <button type="button" class="modify-btn mb-5 font-semibold text-lg text-gray-700 mx-auto flex gap-3 items-center justify-center">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-gray-700" viewBox="0 0 512 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1 0 32c0 8.8 7.2 16 16 16l32 0zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"/></svg>
                     <span>Modify Post</span>
                 </button>
@@ -325,6 +356,86 @@
             </div>
         </div>
     </div>
+
+    <?php endif; ?>
+    
+    <!-- Side Menu and delete confirmation for admins, super admins and post author -->
+
+    <?php if($role == 'admin' || $role == 'super_admin' || ($role == 'user' && $id == $row["post_author"])): ?>
+
+        <div class="w-full h-screen bg-black fixed bg-opacity-70 hidden justify-center items-center top-0 left-0 edit-blog-modal">
+            <div class="w-full max-w-lg bg-white rounded-lg shadow">
+                <div class="modal-header flex justify-between px-7 py-4 border-b border-gray-300">
+                    <h2 class="font-semibold text-2xl">Edit Post</h2>
+                    <button type="button" class="font-bold text-2xl text-red-500 close-btn">X</button>
+                </div>
+                <div class="px-7 py-5">
+                    <form action="requests/edit-post.php" method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="post-id" value="<?php echo $row["post_id"]; ?>">
+                        <div class="w-full mb-4">
+                            <label for="blog-title" class="block mb-1">Title *</label>
+                            <input type="text" id="blog-title" name="blog-title" value="<?php echo $row["post_title"]; ?>" class="w-full px-3 py-2 border border-gray-300 rounded outline-none" placeholder="Enter your email">
+                        </div>
+                        <div class="mb-4">
+                            <label for="blog-body" class="block mb-1">Blog Body *</label>
+                            <textarea id="blog-body" name="blog-body" class="w-full px-3 py-2 border border-gray-300 rounded outline-none resize-y h-32" placeholder="Enter your message"><?php echo trim($row["post_content"]); ?></textarea>
+                        </div>
+                        <div class="mb-4">
+                            <label for="blog-tags" class="block mb-1">Tags *</label>
+                            <div class="">
+                                <div class="bg-gray-200 mr-1 px-4 py-1.5 rounded-md inline-flex justify-center items-center gap-2">
+                                    <span class="tags-count"><?php echo count(explode(';', $tags_list)) - 1; ?></span>Tags
+                                </div>
+                                <button type="button" class="edit-tags-btn bg-blue-500 text-white px-4 py-1.5 rounded-md inline-flex justify-center items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="fill-white w-3.5 h-3.5" viewBox="0 0 512 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1 0 32c0 8.8 7.2 16 16 16l32 0zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"/></svg>
+                                    <span>Edit</span>
+                                </button>
+                            </div>
+                            <input type="hidden" id="blog-tags" name="blog-tags" value="<?php echo $tags_list; ?>" class="w-full px-3 py-2 border border-gray-300 rounded outline-none resize-none" readonly>
+                        </div>
+                        <div class="w-full mb-4">
+                            <p class="block mb-1">Blog Image</p>
+                            <div class="text-center">
+                                <label for="blog-image" class="inline-block mx-auto justify-center items-center cursor-pointer bg-gray-100 border border-gray-200 rounded gap-3">
+                                    <img src="<?php echo $row["post_image"]; ?>" class="h-20 rounded">   
+                                    <span class="sr-only">Upload an image</span>
+                                </label>
+                            </div>
+                            <input type="file" name="blog-image" id="blog-image" class="hidden">
+                        </div>
+                        <button type="submit" id="edit-post-submit" class="px-6 py-2 font-semibold rounded bg-green-500 text-white">EDIT</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="w-full h-screen bg-black fixed bg-opacity-70 hidden justify-center items-center top-0 left-0 edit-tags-modal z-30">
+            <div class="w-full max-w-lg bg-white rounded-lg shadow">
+                <div class="modal-header flex justify-between px-7 py-4 border-b border-gray-300">
+                    <h2 class="font-semibold text-2xl">Select blog tags</h2>
+                    <button type="button" class="font-bold text-2xl text-red-500 close-btn">X</button>
+                </div>
+                <div class="px-7 py-5">
+                    <form action="" method="POST">
+                        <div class="w-full mb-4">
+                            <label for="tag-search" class="block mb-2 font-semibold">Search for tags</label>
+                            <input type="text" id="tag-search" name="tag-search" class="w-full px-3 py-2 border border-gray-300 rounded outline-none" placeholder="Type in something ...">
+                        </div>
+                        <h2 class="mb-2 font-semibold">Available Tags</h2>
+                        <div class="available-tags *:px-4 *:py-1.5 *:rounded-md *:border *:border-gray-200 mb-6 flex gap-3 flex-wrap content-start max-h-60">
+                            
+                            <?php
+                                $tags = mysqli_query($conn, "SELECT * FROM tags");
+
+                                while($row = mysqli_fetch_assoc($tags)) {
+                                    echo "<button type='button' data-id='{$row["tag_id"]}' class='bg-gray-100'>{$row["tag_name"]}</button>";
+                                }
+                            ?>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
 
     <?php endif; ?>
 
