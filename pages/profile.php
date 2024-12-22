@@ -1,4 +1,6 @@
 <?php
+    session_start();
+
     require_once "../connect/db-connect.php";
     require_once "../auth/JWT.php";
     require_once "../inc/functions.php";
@@ -99,11 +101,29 @@
     ?>
     
     <h1 class="sr-only">Profile</h1>
+    <?php 
+        if (isset($_SESSION["user_error_msg"])) {
+            echo 
+            "<div class='max-w-lg mx-auto bg-red-200 border border-red-300 px-8 py-5 rounded-md mt-10 text-center'>
+                <h2 class='mb-3 font-bold text-lg'>Error!</h2>
+                <p class='text-center font-semibold'>{$_SESSION["user_error_msg"]}</p>
+            </div>";
+            
+        } else if (isset($_SESSION["user_success_msg"])) {
+            echo 
+            "<div class='max-w-lg mx-auto bg-green-200 border border-green-300 px-8 py-5 rounded-md mt-10 text-center'>
+                <h2 class='mb-3 font-bold text-lg'>Awesome!</h2>
+                <p class='text-center font-semibold'>{$_SESSION["user_success_msg"]}</p>
+            </div>";
+        }
+        session_destroy();
+    ?>
+
     <div class="max-w-7xl mx-auto px-3 py-10 grid gap-4 grid-cols-[35%_1fr] items-start">
         <div class="border border-gray-200 rounded-lg px-3 py-7 text-center">
             <div>
                 <div class="w-16 h-16 rounded-full border-2 border-green-500 bg-gray-300 mx-auto mb-5">
-                    <img src="/assets/imgs/users/default.webp" class="w-full rounded-full" alt="">
+                    <img src="<?php if ($user_row["user_image"] == "") {echo "/assets/imgs/users/default.webp";} else {echo $user_row["user_image"];} ?>" class="w-full rounded-full" alt="">
                 </div>
                 <h2 class="text-green-500 font-semibold mb-1 text-xl"><?php echo $user_row["first_name"] . ' ' . $user_row["last_name"]; ?></h2>
                 <span class="text-gray-500 text-sm">Joined On: <?php echo format_date($user_row["registration_date"]); ?></span>
@@ -127,7 +147,7 @@
             </div>
         </div>
         <div id="option-blocks">
-            <div class="border border-gray-200 rounded-lg flex-1 py-8 px-8" id="published-posts">
+            <div class="border border-gray-200 rounded-lg flex-1 py-8 px-8 hidden" id="published-posts">
                 <h2 class="text-3xl text-green-500 font-semibold mb-8 text-center">Published Posts</h2>
 
                 <?php
@@ -164,34 +184,41 @@
                     }
                 ?>
             </div>
-            <div class="border border-gray-200 rounded-lg flex-1 py-8 px-12 hidden" id="settings">
+            <div class="border border-gray-200 rounded-lg flex-1 py-8 px-12" id="settings">
                 <h2 class="text-3xl text-green-500 font-semibold mb-8 text-center">Settings</h2>
-                <form action="">
+                <form action="../requests/edit-profile.php" id="profile-form" method="POST" enctype="multipart/form-data">
                     <div class="mb-3">
-                        <label class="block mb-1 font-semibold" for="picture">Profile Picture</label>
-                        <div>
-                            <img src="<?php if ($user_row["user_image"] == "") {echo "/assets/imgs/users/default.webp";} else {echo $user_row["user_image"];} ?>" class="w-24 rounded">
-                        </div>
+                        <p class="block mb-1 font-semibold">Profile Picture</p>
+                        <label class="w-24 h-24 rounded overflow-hidden relative block" for="picture">
+                            <img src="<?php if ($user_row["user_image"] == "") {echo "/assets/imgs/users/default.webp";} else {echo $user_row["user_image"];} ?>" class="block w-full">
+                            <span class="w-full h-full bg-black absolute top-0 left-0 justify-center items-center bg-opacity-60 image-overlay hidden cursor-pointer">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 fill-white" viewBox="0 0 640 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M144 480C64.5 480 0 415.5 0 336c0-62.8 40.2-116.2 96.2-135.9c-.1-2.7-.2-5.4-.2-8.1c0-88.4 71.6-160 160-160c59.3 0 111 32.2 138.7 80.2C409.9 102 428.3 96 448 96c53 0 96 43 96 96c0 12.2-2.3 23.8-6.4 34.6C596 238.4 640 290.1 640 352c0 70.7-57.3 128-128 128l-368 0zm79-217c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l39-39L296 392c0 13.3 10.7 24 24 24s24-10.7 24-24l0-134.1 39 39c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-80-80c-9.4-9.4-24.6-9.4-33.9 0l-80 80z"/></svg>
+                            </span>
+                        </label>
                         <input type="file" id="picture" name="picture" class="hidden" disabled>
                     </div>
                     <div class="mb-3">
                         <label class="block mb-1 font-semibold" for="first_name">First Name</label>
-                        <input type="text" id="first_name" name="first_name" class="px-3 py-1.5 rounded w-80 outline-none bg-white" value="<?php echo $user_row["first_name"]; ?>" placeholder="Write your first name" disabled>
+                        <input type="text" id="first_name" name="first_name" class="px-3 py-1.5 border border-white rounded w-80 outline-none bg-white" value="<?php echo $user_row["first_name"]; ?>" placeholder="Write your first name" disabled>
                     </div>
                     <div class="mb-3">
                         <label class="block mb-1 font-semibold" for="last_name">Last Name</label>
-                        <input type="text" id="last_name" name="last_name" class="px-3 py-1.5 rounded w-80 outline-none bg-white" value="<?php echo $user_row["last_name"]; ?>" placeholder="Write your last name" disabled>
+                        <input type="text" id="last_name" name="last_name" class="px-3 py-1.5 border border-white rounded w-80 outline-none bg-white" value="<?php echo $user_row["last_name"]; ?>" placeholder="Write your last name" disabled>
                     </div>
                     <div class="mb-3">
                         <label class="block mb-1 font-semibold" for="email">Email</label>
-                        <input type="text" id="email" name="email" class="px-3 py-1.5 rounded w-80 outline-none bg-white" value="<?php echo $user_row["email"]; ?>" placeholder="Write your email" disabled>
+                        <input type="text" id="email" name="email" class="px-3 py-1.5 border border-white rounded w-80 outline-none bg-white" value="<?php echo $user_row["email"]; ?>" placeholder="Write your email" disabled>
                     </div>
                     <div class="mb-3">
                         <label class="block mb-1 font-semibold" for="password">Password</label>
-                        <input type="password" id="password" name="password" class="px-3 py-1.5 rounded w-80 outline-none bg-white" value="********" placeholder="Write your password" disabled>
+                        <input type="password" id="password" name="password" class="px-3 py-1.5 border border-white rounded w-80 outline-none bg-white" value="********" placeholder="Write your password" disabled>
                     </div>
-                    <div class="text-center">
-                        <button class="bg-green-500 text-white rounded px-7 py-2">Edit</button>
+                    <div class="text-center buttons mt-5">
+                        <button type="button" class="bg-green-500 text-white rounded px-7 py-2 edit-profile-btn">Edit</button>
+                        <div class="hidden">
+                            <button type="submit" class="bg-blue-500 text-white rounded px-7 py-2 mr-3">Save</button>
+                            <button type="button" class="bg-gray-700 text-white rounded px-7 py-2 edit-profile-cancel">Cancel</button>
+                        </div>
                     </div>
                 </form>
             </div>

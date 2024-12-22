@@ -363,7 +363,7 @@
 
     <?php if($role == 'admin' || $role == 'super_admin' || ($role == 'user' && $id == $row["post_author"])): ?>
 
-        <div class="w-full h-screen bg-black fixed bg-opacity-70 hidden justify-center items-center top-0 left-0 edit-blog-modal">
+        <div class="w-full h-screen bg-black fixed bg-opacity-70 <?php if (!isset($_GET["edit"])) {echo 'hidden';} else {echo 'flex';} ?> justify-center items-center top-0 left-0 edit-blog-modal">
             <div class="w-full max-w-lg bg-white rounded-lg shadow">
                 <div class="modal-header flex justify-between px-7 py-4 border-b border-gray-300">
                     <h2 class="font-semibold text-2xl">Edit Post</h2>
