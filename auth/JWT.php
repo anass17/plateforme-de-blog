@@ -36,7 +36,7 @@
     // Check if payload has the necessary claims
 
     function isPayloadValid($payload) {
-        if (!isset($payload -> exp, $payload -> email, $payload -> iat, $payload -> id, $payload -> role, $payload -> first_name, $payload -> last_name, $payload -> image_url)) {
+        if (!isset($payload -> exp, $payload -> email, $payload -> iat, $payload -> id, $payload -> role, $payload -> first_name, $payload -> last_name)) {
             return false;
         }
         return true;
@@ -96,7 +96,7 @@
         $jwt = json_decode($jwt_cookie) -> jwt;
         
         $jwt_parts = explode('.', $jwt);
-
+        
         if (count($jwt_parts) !== 3) {
             return false;
         }
