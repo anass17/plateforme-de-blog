@@ -11,7 +11,13 @@
                 echo 
                 '<nav class="flex items-center">
                     <a href="/blogs.php" class="font-semibold text-md ml-4">Blogs</a>
-                    <a href="/pages/dashboard.php" class="font-semibold text-md ml-4">Dashboard</a>
+                    ';  
+                    
+                    if ($role === "admin") {
+                        echo '<a href="/pages/dashboard.php" class="font-semibold text-md ml-4">Dashboard</a>';
+                    }
+                    
+                    echo '
                     <a href="/auth/logout.php" class="font-semibold text-md ml-4">logout</a>
                     <a href="/pages/profile.php" class="font-semibold text-md ml-4 inline-flex gap-3 items-center">
                         <span>' . $first_name . ' ' . $last_name . '</span>
