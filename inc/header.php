@@ -4,7 +4,7 @@
             <a href="/blogs.php" class="text-lg font-bold text-white">Blog</a>
         </div>
         <?php
-            if ($role === "user" || $role === "admin") {
+            if ($role === "user" || $role === "admin" || $role === "super_admin") {
                 if ($image_url == "") {
                     $image_url = "/assets/imgs/users/default.webp";
                 }
@@ -13,7 +13,7 @@
                     <a href="/blogs.php" class="font-semibold text-md ml-4">Blogs</a>
                     ';  
                     
-                    if ($role === "admin") {
+                    if ($role === "admin" || $role === "super_admin") {
                         echo '<a href="/pages/dashboard.php" class="font-semibold text-md ml-4">Dashboard</a>';
                     }
                     

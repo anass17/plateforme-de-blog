@@ -50,7 +50,14 @@
     <?php 
         include "../inc/header.php";
 
+        $counts = mysqli_query($conn, "SELECT count(*) AS count FROM users GROUP BY user_role ORDER BY user_role");
 
+        $counts_result = array();
+
+        while($row = mysqli_fetch_assoc($counts)) {
+            array_push($counts_result, $row["count"]);
+        }
+        
     ?>
 
     <h1 class="mt-8 text-center text-gray-600 font-semibold text-3xl">Dashboard</h1>
@@ -61,11 +68,11 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 relative top-0.5 fill-green-500" viewBox="0 0 512 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M64 64c0-17.7-14.3-32-32-32S0 46.3 0 64L0 400c0 44.2 35.8 80 80 80l400 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L80 416c-8.8 0-16-7.2-16-16L64 64zm406.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L320 210.7l-57.4-57.4c-12.5-12.5-32.8-12.5-45.3 0l-112 112c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L240 221.3l57.4 57.4c12.5 12.5 32.8 12.5 45.3 0l128-128z"/></svg>
                     <span>Statistics</span>
                 </button>
-                <button type="button" data-target="liked-posts" class="font-semibold mb-3 flex gap-3">
+                <button type="button" data-target="users" class="font-semibold mb-3 flex gap-3">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 relative top-0.5 fill-green-500" viewBox="0 0 448 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512l388.6 0c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304l-91.4 0z"/></svg>
                     <span>Users</span>
                 </button>
-                <button type="button" data-target="settings" class="font-semibold mb-3 flex gap-3">
+                <button type="button" data-target="posts" class="font-semibold mb-3 flex gap-3">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 relative top-0.5 fill-green-500" viewBox="0 0 448 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M288 64c0 17.7-14.3 32-32 32L32 96C14.3 96 0 81.7 0 64S14.3 32 32 32l224 0c17.7 0 32 14.3 32 32zm0 256c0 17.7-14.3 32-32 32L32 352c-17.7 0-32-14.3-32-32s14.3-32 32-32l224 0c17.7 0 32 14.3 32 32zM0 192c0-17.7 14.3-32 32-32l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 224c-17.7 0-32-14.3-32-32zM448 448c0 17.7-14.3 32-32 32L32 480c-17.7 0-32-14.3-32-32s14.3-32 32-32l384 0c17.7 0 32 14.3 32 32z"/></svg>
                     <span>Posts</span>
                 </button>
@@ -146,56 +153,140 @@
                     </div>
                 </div>
             </div>
-            <div class="border border-gray-200 rounded-md flex-1 py-8 px-8 hidden" id="liked-posts">
-                <h2 class="text-3xl text-green-500 font-semibold mb-8 text-center">Liked Posts</h2>
-                <?php
-                    if ($posts_react_result -> num_rows > 0) {
-                        while($row = $posts_react_result -> fetch_assoc()) {
-                            $formated_datetime = format_datetime($row["post_date"]);
+            <div class="border border-gray-200 rounded-md flex-1 py-8 px-8" id="users">
+                <h2 class="text-3xl text-green-500 font-semibold mb-8 text-center">Users</h2>
+                <h3 class="font-semibold text-lg mb-5">Super Admins <span class="text-gray-500 ml-7"><?php echo $counts_result[3]; ?></span></h3>
+                <div class="">
+                    <?php
+                        $super_admins = mysqli_query($conn, "SELECT * FROM users WHERE user_role = 4");
+
+                        while ($row = mysqli_fetch_assoc($super_admins)) {
+                            $formated_date = format_date($row["registration_date"]);
                             echo 
-                            "<div class='mb-6'>
-                                <h3 class='font-semibold text-blue-500 text-lg'><a href='/view.php?id={$row["post_id"]}'>{$row["post_title"]}</a></h3>
-                                <span class='text-gray-400 text-md'>{$formated_datetime}</span>
-                                <p class='mt-2'>{$row["post_content"]}</p>
+                            "<div class='user-row flex justify-between items-center mb-5'>
+                                <div class='flex items-center gap-5'>
+                                    <img src='/assets/imgs/users/default.webp' class='w-16 h-16 rounded'>
+                                    <div class=''>
+                                        <h4 class=''><a href='' class='text-blue-500 font-bold'>{$row["first_name"]} {$row["last_name"]}</a><span class='ml-5 text-gray-600'>&lt;{$row["email"]}&gt;</span></h4>
+                                        <span class='text-sm text-gray-400'><span class='font-medium'>Joined On</span>: $formated_date</span>
+                                    </div>
+                                </div>
                             </div>";
                         }
-                    } else {
-                        echo '<p class="text-center font-semibold text-md text-gray-600">You have not liked any posts yet.</p>';
-                    }
-                ?>
+                    ?>
+                    
+                </div>
+                <h3 class="font-semibold text-lg mb-5">Admins <span class="text-gray-500 ml-7"><?php echo $counts_result[0]; ?></span></h3>
+                <div class="">
+                    <?php
+                        $admins = mysqli_query($conn, "SELECT * FROM users WHERE user_role = 1");
+
+                        if (mysqli_num_rows($admins) > 0) {
+                            while ($row = mysqli_fetch_assoc($admins)) {
+                                $formated_date = format_date($row["registration_date"]);
+                                echo 
+                                "<div class='user-row flex justify-between items-center mb-5'>
+                                    <div class='flex items-center gap-5'>
+                                        <img src='/assets/imgs/users/default.webp' class='w-16 h-16 rounded'>
+                                        <div class=''>
+                                            <h4 class=''><a href='' class='text-blue-500 font-bold'>{$row["first_name"]} {$row["last_name"]}</a><span class='ml-5 text-gray-600'>&lt;{$row["email"]}&gt;</span></h4>
+                                            <span class='text-sm text-gray-400'><span class='font-medium'>Joined On</span>: $formated_date</span>
+                                        </div>
+                                    </div>
+                                    <div class='flex gap-3'>
+                                        <button type='button' class='px-4 py-1.5 rounded bg-gradient-to-tr from-blue-800 to-blue-400 flex items-center justify-center gap-2 text-white w-32'>
+                                            <svg xmlns='http://www.w3.org/2000/svg' class='w-4 h-4 fill-white' viewBox='0 0 320 512'><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d='M2 334.5c-3.8 8.8-2 19 4.6 26l136 144c4.5 4.8 10.8 7.5 17.4 7.5s12.9-2.7 17.4-7.5l136-144c6.6-7 8.4-17.2 4.6-26s-12.5-14.5-22-14.5l-72 0 0-288c0-17.7-14.3-32-32-32L128 0C110.3 0 96 14.3 96 32l0 288-72 0c-9.6 0-18.2 5.7-22 14.5z'/></svg>
+                                            <span class='text-sm'>Downgrade</span>
+                                        </button>
+                                        <button type='button' class='px-4 py-1.5 rounded bg-gradient-to-tr from-red-800 to-red-400 flex items-center justify-center gap-2 text-white w-28'>
+                                            <svg xmlns='http://www.w3.org/2000/svg' class='w-4 h-4 fill-white' viewBox='0 0 512 512'><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d='M367.2 412.5L99.5 144.8C77.1 176.1 64 214.5 64 256c0 106 86 192 192 192c41.5 0 79.9-13.1 111.2-35.5zm45.3-45.3C434.9 335.9 448 297.5 448 256c0-106-86-192-192-192c-41.5 0-79.9 13.1-111.2 35.5L412.5 367.2zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256z'/></svg>
+                                            <span class='text-sm'>Block</span>
+                                        </button>
+                                    </div>
+                                </div>";
+                            }
+                        } else {
+                            echo '<p class="mb-5 text-gray-600 ml-8">No admins were found. Try to upgrade users to become admins</p>';
+                        }
+                    ?>
+                    
+                </div>
+                <h3 class="font-semibold text-lg mb-5">Users <span class="text-gray-500 ml-7"><?php echo $counts_result[1]; ?></span></h3>
+                <div>
+                    <?php
+                        $users = mysqli_query($conn, "SELECT * FROM users WHERE user_role = 2");
+
+                        if (mysqli_num_rows($users) > 0) {
+                            while ($row = mysqli_fetch_assoc($users)) {
+                                $formated_date = format_date($row["registration_date"]);
+                                echo 
+                                "<div class='user-row flex justify-between items-center mb-5'>
+                                    <div class='flex items-center gap-5'>
+                                        <img src='/assets/imgs/users/default.webp' class='w-16 h-16 rounded'>
+                                        <div class=''>
+                                            <h4 class=''><a href='' class='text-blue-500 font-bold'>{$row["first_name"]} {$row["last_name"]}</a><span class='ml-5 text-gray-600'>&lt;{$row["email"]}&gt;</span></h4>
+                                            <span class='text-sm text-gray-400'><span class='font-medium'>Joined On</span>: $formated_date</span>
+                                        </div>
+                                    </div>
+                                    <div class='flex gap-3'>
+                                        <button type='button' class='px-4 py-1.5 rounded bg-gradient-to-tr from-green-800 to-green-400 flex items-center justify-center gap-2 text-white w-28'>
+                                            <svg xmlns='http://www.w3.org/2000/svg' class='w-4 h-4 fill-white' viewBox='0 0 320 512'><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d='M318 177.5c3.8-8.8 2-19-4.6-26l-136-144C172.9 2.7 166.6 0 160 0s-12.9 2.7-17.4 7.5l-136 144c-6.6 7-8.4 17.2-4.6 26S14.4 192 24 192l72 0 0 288c0 17.7 14.3 32 32 32l64 0c17.7 0 32-14.3 32-32l0-288 72 0c9.6 0 18.2-5.7 22-14.5z'/></svg>
+                                            <span class='text-sm'>Upgrade</span>
+                                        </button>
+                                        <button type='button' class='px-4 py-1.5 rounded bg-gradient-to-tr from-red-800 to-red-400 flex items-center justify-center gap-2 text-white w-28'>
+                                            <svg xmlns='http://www.w3.org/2000/svg' class='w-4 h-4 fill-white' viewBox='0 0 512 512'><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d='M367.2 412.5L99.5 144.8C77.1 176.1 64 214.5 64 256c0 106 86 192 192 192c41.5 0 79.9-13.1 111.2-35.5zm45.3-45.3C434.9 335.9 448 297.5 448 256c0-106-86-192-192-192c-41.5 0-79.9 13.1-111.2 35.5L412.5 367.2zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256z'/></svg>
+                                            <span class='text-sm'>Block</span>
+                                        </button>
+                                    </div>
+                                </div>";
+                            }
+                        } else {
+                            echo '<p class="mb-5 text-gray-600 ml-8">No registred users were found.</p>';
+                        }
+                    ?>
+                </div>
             </div>
-            <div class="border border-gray-200 rounded-md flex-1 py-8 px-12 hidden" id="settings">
-                <h2 class="text-3xl text-green-500 font-semibold mb-8 text-center">Settings</h2>
-                <form action="">
-                    <div class="mb-3">
-                        <label class="block mb-1 font-semibold" for="picture">Profile Picture</label>
-                        <div>
-                            <img src="<?php if ($user_row["user_image"] == "") {echo "/assets/imgs/users/default.webp";} else {echo $user_row["user_image"];} ?>" class="w-24 rounded">
-                        </div>
-                        <input type="file" id="picture" name="picture" class="hidden" disabled>
-                    </div>
-                    <div class="mb-3">
-                        <label class="block mb-1 font-semibold" for="first_name">First Name</label>
-                        <input type="text" id="first_name" name="first_name" class="px-3 py-1.5 rounded w-80 outline-none bg-white" value="<?php echo $user_row["first_name"]; ?>" placeholder="Write your first name" disabled>
-                    </div>
-                    <div class="mb-3">
-                        <label class="block mb-1 font-semibold" for="last_name">Last Name</label>
-                        <input type="text" id="last_name" name="last_name" class="px-3 py-1.5 rounded w-80 outline-none bg-white" value="<?php echo $user_row["last_name"]; ?>" placeholder="Write your last name" disabled>
-                    </div>
-                    <div class="mb-3">
-                        <label class="block mb-1 font-semibold" for="email">Email</label>
-                        <input type="text" id="email" name="email" class="px-3 py-1.5 rounded w-80 outline-none bg-white" value="<?php echo $user_row["email"]; ?>" placeholder="Write your email" disabled>
-                    </div>
-                    <div class="mb-3">
-                        <label class="block mb-1 font-semibold" for="password">Password</label>
-                        <input type="password" id="password" name="password" class="px-3 py-1.5 rounded w-80 outline-none bg-white" value="********" placeholder="Write your password" disabled>
-                    </div>
-                    <div class="text-center">
-                        <button class="bg-green-500 text-white rounded px-7 py-2">Edit</button>
-                    </div>
-                </form>
+            <div class="border border-gray-200 rounded-md flex-1 py-8 px-12 hidden" id="posts">
+                <h2 class="text-3xl text-green-500 font-semibold mb-8 text-center">Published Posts</h2>
+                <div>
+                    <?php
+                        $posts = mysqli_query($conn, "SELECT * FROM posts limit 0,5");
+
+                        while ($row = mysqli_fetch_assoc($posts)) {
+                            echo
+                            "<div class='mb-8'>
+                                <div class='flex justify-between items-center'>
+                                    <div>
+                                        <h3 class='font-semibold text-lg text-blue-500'><a href='#'>Coding Life</a></h3>
+                                        <h4 class='text-gray-400 text-sm mb-3'><a href='#'>Anass Boutaib</a> / <span>16 Dec 2024 - 15:13</span></h4>
+                                    </div>
+                                    <div class='flex gap-3'>
+                                        <button type='button' class='px-4 py-2 rounded bg-gradient-to-tr from-blue-600 to-blue-400 shadow-lg flex gap-3 items-center'>
+                                            <svg xmlns='http://www.w3.org/2000/svg' class='w-3.5 h-3.5 fill-white' viewBox='0 0 512 512'><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d='M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1 0 32c0 8.8 7.2 16 16 16l32 0zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z'/></svg>
+                                            <span class='text-white text-xs font-medium'>Edit</span>
+                                        </button>
+                                        <button type='button' class='px-4 py-2 rounded bg-gradient-to-tr from-red-600 to-red-400 shadow-lg flex gap-3 items-center'>
+                                            <svg xmlns='http://www.w3.org/2000/svg' class='w-3.5 h-3.5 fill-white' viewBox='0 0 448 512'><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d='M135.2 17.7C140.6 6.8 151.7 0 163.8 0L284.2 0c12.1 0 23.2 6.8 28.6 17.7L320 32l96 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 96C14.3 96 0 81.7 0 64S14.3 32 32 32l96 0 7.2-14.3zM32 128l384 0 0 320c0 35.3-28.7 64-64 64L96 512c-35.3 0-64-28.7-64-64l0-320zm96 64c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16z'/></svg>
+                                            <span class='text-white text-xs font-medium'>Delete</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <p class='text-gray-700'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit ab quod ullam commodi magnam assumenda corporis! Quisquam dolores soluta impedit, aliquam perferendis ipsa eum consectetur earum nihil, reiciendis incidunt iste!</p>
+                            </div>";
+                        }
+                    ?>
+                    
+                </div>
+                <div class="flex justify-center gap-3">
+                    <button type="button" class="py-2 px-3 rounded bg-gray-200 fill-gray-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 320 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192z"/></svg>
+                    </button>
+                    <button type="button" class="py-2 px-3 rounded bg-blue-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-white" viewBox="0 0 320 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z"/></svg>
+                    </button>
+                </div>
             </div>
-            <div class="border border-gray-200 rounded-md flex-1 py-8 px-8" id="tags">
+            <div class="border border-gray-200 rounded-md flex-1 py-8 px-8 hidden" id="tags">
                 <h2 class="text-3xl text-green-500 font-semibold mb-8 text-center">Tags</h2>
                 <p class="font-semibold text-center mb-5">Here, all the tags are listed with the number of posts they are used in.</p>
                 <div class="mb-6 flex gap-4 justify-center">
