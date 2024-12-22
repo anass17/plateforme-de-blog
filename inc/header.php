@@ -1,7 +1,7 @@
-<header class="bg-green-400 shadow-lg relative">
+<header class="bg-gradient-to-tr from-green-700 to-green-400 shadow-lg relative">
     <div class="container max-w-7xl flex justify-between items-center mx-auto px-3 h-20">
         <div>
-            <a href="/blogs.php" class="text-lg font-bold">Blog</a>
+            <a href="/blogs.php" class="text-lg font-bold text-white">Blog</a>
         </div>
         <?php
             if ($role === "user" || $role === "admin") {
