@@ -183,13 +183,38 @@
                 </div>
                 <div class="flex px-5 py-3 justify-between border border-gray-200">
                     <div class="flex">
+
+                        <?php
+                            $stmt = $conn -> prepare("SELECT count(*) as count FROM post_reactions WHERE react_post = ? and type = 1;");
+
+                            $stmt -> bind_param("i", $_GET["id"]);
+
+                            $stmt -> execute();
+
+                            $react_result = $stmt -> get_result();
+
+                            $likes = $react_result -> fetch_assoc()["count"];
+
+
+                            $stmt = $conn -> prepare("SELECT count(*) as count FROM post_reactions WHERE react_post = ? and type = 0;");
+
+                            $stmt -> bind_param("i", $_GET["id"]);
+
+                            $stmt -> execute();
+
+                            $react_result = $stmt -> get_result();
+
+                            $dislikes = $react_result -> fetch_assoc()["count"];
+
+                        ?>
+
                         <div class="mr-6">
-                            <button type="button" class="font-semibold mr-1">Like</button>
-                            <span>12</span>
+                            <button type="button" class="font-semibold mr-1 <?php if ($role != null) {echo 'like-btn';} else{echo '';} ?>">Like</button>
+                            <span><?php echo $likes; ?></span>
                         </div>
                         <div>
                             <button type="button" class="font-semibold mr-1">Dislike</button>
-                            <span>2</span>
+                            <span><?php echo $dislikes; ?></span>
                         </div>
                     </div>
                     <div class="ml-8">

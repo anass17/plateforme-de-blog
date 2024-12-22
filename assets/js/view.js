@@ -144,3 +144,25 @@ if (postMenuModal != null) {
     }
 }
 
+let likeBtn = document.querySelector('.like-btn');
+
+if (likeBtn) {
+    likeBtn.addEventListener('click', function () {
+        
+        // fetch('/requests/fetch-add-reaction.php').then(response => response.json()).then(data => console.log(data));
+        fetch('/requests/fetch-add-reaction.php', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              id: +location.href.split("?id=")[1]
+            }),
+          }).then(response => response.json())
+          .then(data => {
+            if (data.result == '1') {
+                likeBtn.classList.add('text-blue-500');
+            }
+          });
+    });
+}
