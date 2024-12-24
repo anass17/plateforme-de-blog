@@ -144,25 +144,59 @@ if (postMenuModal != null) {
     }
 }
 
+// Like a post
+
 let likeBtn = document.querySelector('.like-btn');
+let dislikeBtn = document.querySelector('.dislike-btn');
+
+function reactionFetch(endpoint, reaction, element, color, increase) {
+    fetch(endpoint, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            id: +location.href.split("?id=")[1],
+            reaction: reaction,
+        }),
+    }).then(response => response.json())
+    .then(data => {
+        if (data.result == '1') {
+            if (increase == 1) {
+                element.classList.add(`text-${color}-500`);
+                element.nextElementSibling.textContent = +element.nextElementSibling.textContent + 1;
+            } else {
+                element.classList.remove(`text-${color}-500`);
+                element.nextElementSibling.textContent -= 1;
+            }
+        }
+    });
+}
 
 if (likeBtn) {
     likeBtn.addEventListener('click', function () {
         
-        // fetch('/requests/fetch-add-reaction.php').then(response => response.json()).then(data => console.log(data));
-        fetch('/requests/fetch-add-reaction.php', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              id: +location.href.split("?id=")[1]
-            }),
-          }).then(response => response.json())
-          .then(data => {
-            if (data.result == '1') {
-                likeBtn.classList.add('text-blue-500');
-            }
-          });
+        if (!this.classList.contains('text-blue-500')) {
+            
+            reactionFetch('/requests/fetch-add-reaction.php', 'like', likeBtn, 'blue', true);
+            
+        } else {
+
+            reactionFetch('/requests/fetch-remove-reaction.php', 'like', likeBtn, 'blue', false);
+        
+        }
+    });
+
+    dislikeBtn.addEventListener('click', function () {
+        
+        if (!this.classList.contains('text-red-500')) {
+            
+            reactionFetch('/requests/fetch-add-reaction.php', 'dislike', dislikeBtn, 'red', true);
+            
+        } else {
+
+            reactionFetch('/requests/fetch-remove-reaction.php', 'dislike', dislikeBtn, 'red', false);
+        
+        }
     });
 }

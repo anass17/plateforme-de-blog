@@ -33,15 +33,10 @@
         }
 
         $post_id = $data['id'];
-        $post_reaction = $data['reaction'];
 
-        if ($post_reaction == 'like') {
-            $stmt = $conn -> prepare("INSERT INTO post_reactions (react_user, react_post, type) VALUES (?, ?, 1)");
-        } else {
-            $stmt = $conn -> prepare("INSERT INTO post_reactions (react_user, react_post, type) VALUES (?, ?, 0)");
-        }
-
+        $stmt = $conn -> prepare("DELETE FROM post_reactions WHERE react_user = ? and react_post = ?");
         $stmt -> bind_param("ii", $id, $post_id);
+
 
         try {
             $stmt -> execute();
@@ -51,5 +46,5 @@
         }
 
     } else {
-        echo json_encode(["result" => "No"]);
+        echo json_encode(["result" => "0"]);
     }

@@ -112,6 +112,9 @@
                 <?php
                     $post_stats = mysqli_query($conn, "SELECT count(*) as count FROM posts");
                     $tag_stats = mysqli_query($conn, "SELECT count(*) as count FROM tags");
+                    $comment_stats = mysqli_query($conn, "SELECT count(*) as count FROM comments");
+                    $like_stats = mysqli_query($conn, "SELECT count(*) as count FROM post_reactions WHERE type = 1");
+                    $dislike_stats = mysqli_query($conn, "SELECT count(*) as count FROM post_reactions WHERE type = 0");
                 ?>
 
                 <div class="mb-5">
@@ -155,11 +158,11 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div class="border-2 border-green-500 py-5 text-center rounded-lg">
                             <h4 class="mb-1 font-semibold">Likes</h4>
-                            <span class="inline-block text-xl font-bold">5</span>
+                            <span class="inline-block text-xl font-bold"><?php echo mysqli_fetch_assoc($like_stats)['count']; ?></span>
                         </div>
                         <div class="border-2 border-orange-500 py-5 text-center rounded-lg">
                             <h4 class="mb-1 font-semibold">Dislikes</h4>
-                            <span class="inline-block text-xl font-bold">14</span>
+                            <span class="inline-block text-xl font-bold"><?php echo mysqli_fetch_assoc($dislike_stats)['count']; ?></span>
                         </div>
                     </div>
                 </div>
@@ -173,7 +176,7 @@
                         </div>
                         <div class="border-2 border-pink-500 py-5 text-center rounded-lg">
                             <h4 class="mb-1 font-semibold">Comments</h4>
-                            <span class="inline-block text-xl font-bold">14</span>
+                            <span class="inline-block text-xl font-bold"><?php echo (mysqli_fetch_assoc($comment_stats)["count"]); ?></span>
                         </div>
                     </div>
                 </div>

@@ -185,35 +185,45 @@
                     <div class="flex">
 
                         <?php
+
+                            // Get the total of likes
+
                             $stmt = $conn -> prepare("SELECT count(*) as count FROM post_reactions WHERE react_post = ? and type = 1;");
-
                             $stmt -> bind_param("i", $_GET["id"]);
-
                             $stmt -> execute();
-
                             $react_result = $stmt -> get_result();
-
                             $likes = $react_result -> fetch_assoc()["count"];
 
+                            // Get the total of dislikes
 
                             $stmt = $conn -> prepare("SELECT count(*) as count FROM post_reactions WHERE react_post = ? and type = 0;");
-
                             $stmt -> bind_param("i", $_GET["id"]);
-
                             $stmt -> execute();
-
                             $react_result = $stmt -> get_result();
-
                             $dislikes = $react_result -> fetch_assoc()["count"];
 
+                            // Check if user has reacted to the post
+
+                            $stmt = $conn -> prepare("SELECT * FROM post_reactions WHERE react_user = ? and react_post = ?");
+                            $stmt -> bind_param('ii', $id, $_GET["id"]);
+                            $stmt -> execute();
+                            $result = $stmt -> get_result();
+                            
+                            $react_type = null;
+
+                            if ($result -> num_rows > 0) {
+                                $row = $result -> fetch_assoc();
+
+                                $react_type = $row["type"];
+                            }
                         ?>
 
                         <div class="mr-6">
-                            <button type="button" class="font-semibold mr-1 <?php if ($role != null) {echo 'like-btn';} else{echo '';} ?>">Like</button>
+                            <button type="button" class="font-semibold mr-1 <?php if ($role != null) {echo 'like-btn';} if ($react_type === 1) {echo ' text-blue-500';}?>">Like</button>
                             <span><?php echo $likes; ?></span>
                         </div>
                         <div>
-                            <button type="button" class="font-semibold mr-1">Dislike</button>
+                            <button type="button" class="font-semibold mr-1 <?php if ($role != null) {echo 'dislike-btn';} if($react_type === 0) {echo ' text-red-500';} ?>">Dislike</button>
                             <span><?php echo $dislikes; ?></span>
                         </div>
                     </div>
