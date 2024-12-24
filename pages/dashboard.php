@@ -190,10 +190,13 @@
 
                         while ($row = mysqli_fetch_assoc($super_admins)) {
                             $formated_date = format_date($row["registration_date"]);
+
+                            $user_image = $row["user_image"] == "" ? "/assets/imgs/users/default.webp" : $row["user_image"];
+
                             echo 
                             "<div class='user-row flex justify-between items-center mb-5'>
                                 <div class='flex items-center gap-5'>
-                                    <img src='/assets/imgs/users/default.webp' class='w-16 h-16 rounded'>
+                                    <img src='$user_image' class='w-16 h-16 rounded'>
                                     <div class=''>
                                         <h4 class=''><a href='/pages/user.php?id={$row["user_id"]}' class='text-blue-500 font-bold'>{$row["first_name"]} {$row["last_name"]}</a><span class='ml-5 text-gray-600'>&lt;{$row["email"]}&gt;</span></h4>
                                         <span class='text-sm text-gray-400'><span class='font-medium'>Joined On</span>: $formated_date</span>
@@ -212,10 +215,13 @@
                         if (mysqli_num_rows($admins) > 0) {
                             while ($row = mysqli_fetch_assoc($admins)) {
                                 $formated_date = format_date($row["registration_date"]);
+
+                                $user_image = $row["user_image"] == "" ? "/assets/imgs/users/default.webp" : $row["user_image"];
+
                                 echo 
                                 "<div class='user-row flex justify-between items-center mb-5'>
                                     <div class='flex items-center gap-5'>
-                                        <img src='/assets/imgs/users/default.webp' class='w-16 h-16 rounded'>
+                                        <img src='$user_image' class='w-16 h-16 rounded'>
                                         <div class=''>
                                             <h4 class=''><a href='/pages/user.php?id={$row["user_id"]}' class='text-blue-500 font-bold'>{$row["first_name"]} {$row["last_name"]}</a><span class='ml-5 text-gray-600'>&lt;{$row["email"]}&gt;</span></h4>
                                             <span class='text-sm text-gray-400'><span class='font-medium'>Joined On</span>: $formated_date</span>
@@ -251,10 +257,13 @@
                         if (mysqli_num_rows($users) > 0) {
                             while ($row = mysqli_fetch_assoc($users)) {
                                 $formated_date = format_date($row["registration_date"]);
+
+                                $user_image = $row["user_image"] == "" ? "/assets/imgs/users/default.webp" : $row["user_image"];
+
                                 echo 
                                 "<div class='user-row flex justify-between items-center mb-5'>
                                     <div class='flex items-center gap-5'>
-                                        <img src='/assets/imgs/users/default.webp' class='w-16 h-16 rounded'>
+                                        <img src='$user_image' class='w-16 h-16 rounded'>
                                         <div class=''>
                                             <h4 class=''><a href='/pages/user.php?id={$row["user_id"]}' class='text-blue-500 font-bold'>{$row["first_name"]} {$row["last_name"]}</a><span class='ml-5 text-gray-600'>&lt;{$row["email"]}&gt;</span></h4>
                                             <span class='text-sm text-gray-400'><span class='font-medium'>Joined On</span>: $formated_date</span>

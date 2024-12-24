@@ -67,6 +67,8 @@
             }
 
             $post_author_id = $row["post_author"];
+
+            $user_image = $row["user_image"] == "" ? "/assets/imgs/users/default.webp" : $row["user_image"];
         }
     ?>
 
@@ -93,8 +95,11 @@
         <!-- Author Block -->
 
         <div class="author-window border border-gray-300 rounded-lg p-6 w-[40%]">
-            <h2 class="text-green-500 font-semibold text-lg"><a href="/pages/user.php?id=<?php echo $row["user_id"]; ?>"><?php echo $row["first_name"] . ' ' . $row["last_name"]; ?></a></h2>
-            <span class="text-gray-500 text-sm">Joined Since: <?php echo format_date($row["registration_date"]); ?></span>
+            <div class="w-16 h-16 rounded-full border-2 border-green-500 bg-gray-300 mx-auto mb-5">
+                <img src="<?php echo $user_image; ?>" class="w-full rounded-full" alt="">
+            </div>
+            <h2 class="text-green-500 font-semibold text-lg text-center"><a href="/pages/user.php?id=<?php echo $row["user_id"]; ?>"><?php echo $row["first_name"] . ' ' . $row["last_name"]; ?></a></h2>
+            <span class="text-gray-500 text-sm text-center block mx-auto">Joined Since: <?php echo format_date($row["registration_date"]); ?></span>
             <div class="mt-5">
 
                 <?php
@@ -116,7 +121,7 @@
                             }
                             echo '</ul>';
                         } else {
-                            echo "<p class='mb-2'>{$row["first_name"]}, does not have any other posts</p>";
+                            echo "<p class='mb-2 text-center'>{$row["first_name"]}, does not have any other posts</p>";
                         }
                     } else {
                         echo 'Error! Could not process your request';

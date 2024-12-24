@@ -55,10 +55,14 @@
         $stmt = $conn -> prepare("SELECT * FROM users WHERE user_id = ?");
         $stmt -> bind_param("i", $_GET["id"]);
 
+        $user_image = '';
+
         if ($stmt -> execute()) {
             $result = $stmt -> get_result();
 
             $user_row = $result -> fetch_assoc();
+
+            $user_image = $user_row["user_image"] == "" ? "/assets/imgs/users/default.webp" : $user_row["user_image"];
         }
 
         // Get statistics
@@ -94,7 +98,7 @@
         <div class="border border-gray-200 rounded-lg px-3 py-7 text-center">
             <div>
                 <div class="w-16 h-16 rounded-full border-2 border-green-500 bg-gray-300 mx-auto mb-5">
-                    <img src="/assets/imgs/users/default.webp" class="w-full rounded-full" alt="">
+                    <img src="<?php echo $user_image; ?>" class="w-full rounded-full" alt="">
                 </div>
                 <h2 class="text-green-500 font-semibold mb-1 text-xl"><?php echo $user_row["first_name"] . ' ' . $user_row["last_name"]; ?></h2>
                 <span class="text-gray-500 text-sm">Joined On: <?php echo format_date($user_row["registration_date"]); ?></span>
